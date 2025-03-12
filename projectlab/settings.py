@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-e=d8ry(4m=oaint+d&-0xdfwtknbn4eztocw)%m_)#9b6c_7zf
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
@@ -80,6 +80,9 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
+CSRF_TRUSTED_ORIGINS = [
+"https://projectlab-jix0.onrender.com/"
+]
 
 
 # Password validation
