@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" rel="stylesheet" />
+    <!-- MDB -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/8.1.0/mdb.min.css" rel="stylesheet" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.2/mdb.min.js"></script>
+
+</head>
+
+<body>
+
+    <main>
+        <div class="container py-5">
+            <button class="btn btn-info mb-2" onclick="history.back()">Back</button>
+            <!-- Project Header -->
+            <div class="card mb-4 shadow-3">
+                <div class="card-header bg-dark text-white position-relative p-0">
+                    <img src="{{ project.imageURL }}" class="card-img-top" alt="Project Cover"
+                        style="height: 400px; object-fit: cover;">
+                    <div class="position-absolute bottom-0 start-0 end-0 p-4 bg-gradient-dark">
+                        <h1 class="text-white mb-1">{{ project.title }}</h1>
+                        <div class="d-flex gap-2">
+                            {% if project.publication_link %}
+                            <a href="{{ project.publication_link }}" target="_blank"
+                                class="badge bg-info text-decoration-none">
+                                <i class="fas fa-book me-1"></i>Published Paper
+                            </a>
+                            {% endif %}
+                            {% if project.dataset_link %}
+                            <a href="{{ project.dataset_link }}" target="_blank"
+                                class="badge bg-success text-decoration-none">
+                                <i class="fas fa-database me-1"></i>Dataset
+                            </a>
+                            {% endif %}
+                        </div>
+                        <small class="text-white-50">Created {{ project.created_at|timesince }} ago</small>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Content -->
+            <div class="row g-4">
+                <!-- Left Column -->
+                <div class="col-lg-8">
+                    <!-- Project Description -->
+                    <div class="card mb-4 shadow-2">
+                        <div class="card-body">
+                            <h4 class="mb-3"><i class="fas fa-file-alt me-2"></i>Description</h4>
+                            <div class="project-content">
+                                {{ project.description|linebreaks }}
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Objectives & Hypothesis -->
+                    <div class="card mb-4 shadow-2">
+                        <div class="card-body">
+                            <h4 class="mb-3"><i class="fas fa-bullseye me-2"></i>Objectives</h4>
+                            <ul class="list-unstyled">
+                                {% for objective in objectives %}
+                                <li class="mb-2 d-flex align-items-start">
+                                    <i class="fas fa-check-circle text-success me-2 mt-1"></i>
+                                    {{ objective }}
+                                </li>
+                                {% endfor %}
+                            </ul>
+
+                            <hr class="my-4">
+
+                            <h4 class="mb-3"><i class="fas fa-question-circle me-2"></i>Hypothesis</h4>
+                            <p class="project-content">{{ project.hypothesis }}</p>
+                        </div>
+                    </div>
+
+
+
+                    <!-- Team Members -->
+                    <div class="card mb-4 shadow-2">
+                        <div class="card-body">
+                            <h4 class="mb-4"><i class="fas fa-users me-2"></i>Team Members</h4>
+                            <div class="list-group">
+                                {% for member in project.students_project.all %}
+                                <div class="list-group-item d-flex align-items-center">
+                                    <a href="{% url 'view_profile' pk=member.user.user.id %}">
+                                        <img src="{{ member.user.imageURL }}" class="rounded-circle me-3" width="50"
+                                            height="50" alt="{{ member.user.user.username }}">
+                                    </a>
+                                    <div class="flex-grow-1">
+                                        <h5 class="mb-1">{{ member.user.user.username }}</h5>
+                                        <p class="mb-0 text-muted">{{ member.user.user.email }}</p>
+                                    </div>
+                                    <span class="badge bg-primary rounded-pill">{{ member.get_role_display }}</span>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Column -->
+                <div class="col-lg-4">
+                    <!-- Resources -->
+                    <div class="card mb-4 shadow-2">
+                        <div class="card-body">
+                            <h4 class="mb-3"><i class="fas fa-link me-2"></i>Resources</h4>
+                            <div class="list-group">
+                                {% if project.publication_link %}
+                                <a href="{{ project.publication_link }}" target="_blank"
+                                    class="list-group-item list-group-item-action d-flex align-items-center">
+                                    <i class="fas fa-file-pdf text-danger me-2"></i>
+                                    Research Publication
+                                </a>
+                                {% endif %}
+
+                                {% if project.dataset_link %}
+                                <a href="{{ project.dataset_link }}" target="_blank"
+                                    class="list-group-item list-group-item-action d-flex align-items-center">
+                                    <i class="fas fa-table text-primary me-2"></i>
+                                    Dataset Repository
+                                </a>
+                                {% endif %}
+                                {% if project.github_link %}
+                                <a href="{{ project.github_link }}" target="_blank"
+                                    class="list-group-item list-group-item-action d-flex align-items-center">
+                                    <i class=" fa-brands fa-github text-primary me-2"></i>
+                                    Github Repository
+                                </a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Project Advisor -->
+                    <div class="card mb-4 shadow-2">
+                        <div class="card-body">
+                            <h4 class="mb-3"><i class="fas fa-chalkboard-teacher me-2"></i>Advisor</h4>
+                            <div class="d-flex align-items-center">
+                                <a href="{% url 'teacher_profile' project.advisor.user.id %}">
+                                    <img src="{{ project.advisor.imageURL }}" class="rounded-circle me-3" width="50"
+                                        height="50" alt="{{ project.advisor.user.username }}">
+                                </a>
+                                <div>
+                                    <h5 class="mb-0 text-capitalize">{{ project.advisor.user.username }}</h5>
+                                    <p class="text-muted mb-0">{{ project.advisor.user.email }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Technical Details -->
+                    <div class="card mb-4 shadow-2">
+                        <div class="card-body">
+                            <h4 class="mb-3"><i class="fas fa-info-circle me-2"></i>Technical Details</h4>
+                            <ul class="list-unstyled">
+                                <li class="mb-2">
+                                    <i class="fas fa-calendar-alt me-2"></i>
+                                    <strong>Start Date:</strong> {{ project.created_at|date:"M Y" }}
+                                </li>
+                                <li class="mb-2">
+                                    <i class="fas fa-toolbox me-2"></i>
+                                    <strong>Methodology:</strong> {{ project.methodology }}
+                                </li>
+                                <li class="mb-2">
+                                    <i class="fas fa-tools me-2"></i>
+                                    <strong>Tools:</strong>
+                                    {% for tool in tools %}
+                                    <span class="badge bg-secondary me-1">{{ tool }}</span>
+                                    {% endfor %}
+
+                                </li>
+                                <li class="mb-2">
+                                    <i class="fas fa-users me-2"></i>
+                                    <strong>Team Size:</strong> {{ project.students.count }} members
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="d-grid gap-2">
+                        {% if project.project_file %}
+                        <a href="{{ project.project_file.url }}" download class="btn btn-primary">
+                            <i class="fas fa-download me-2"></i> Download Project
+                        </a>
+                        {% else %}
+                        <p style="color: red;">No file available for download.</p>
+                        {% endif %}
+
+                        <button id="shareBtn" class="btn btn-outline-secondary">
+                            <i class="fas fa-share-alt me-2"></i> Share Project
+                        </button>
+
+                        <script>
+                            document.getElementById("shareBtn").addEventListener("click", function () {
+                                const projectUrl = "{{ request.build_absolute_uri|escapejs }}"; // Absolute URL of the project page
+
+                                if (navigator.share) {
+                                    navigator.share({
+                                        title: "Check out this project!",
+                                        url: projectUrl
+                                    }).then(() => console.log("Shared successfully"))
+                                        .catch(error => console.log("Error sharing:", error));
+                                } else {
+                                    alert("Your browser does not support direct sharing.");
+                                }
+                            });
+                        </script>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <style>
+        .bg-gradient-dark {
+            background: linear-gradient(to bottom, transparent 0%, rgba(0, 0, 0, 0.8) 100%);
+        }
+
+        .list-group-item:hover {
+            background-color: #f8f9fa;
+            transform: translateX(5px);
+            transition: all 0.3s ease;
+        }
+
+        .project-content {
+            line-height: 1.8;
+            font-size: 1rem;
+        }
+
+        .list-group-item-action:hover {
+            transform: translateX(5px);
+            transition: transform 0.3s ease;
+        }
+    </style>
+
+</body>
+
+</html>

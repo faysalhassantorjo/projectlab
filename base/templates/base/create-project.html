@@ -1,0 +1,355 @@
+{% extends 'base/main.html' %}
+{% load static %}
+
+{% block content %}
+<main>
+    {% if messages %}
+<div class="container mt-3">
+    {% for message in messages %}
+    <div class="alert alert-info {{ message.tags }} alert-dismissible fade show" role="alert">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+    <div class="container py-5">
+        <div class="card shadow-5-strong">
+            <div class="card-header bg-primary text-white py-3">
+                <h2 class="mb-0"><i class="fas fa-project-diagram me-2"></i>Create New Project</h2>
+            </div>
+
+            <div class="card-body p-4">
+                <form method="POST" enctype="multipart/form-data">
+                    {% csrf_token %}
+
+                    <!-- Project Basics Section -->
+                    <div class="row mb-4">
+                        <!-- Left Column -->
+                        <div class="col-lg-8">
+                            <div class="form-outline mb-4">
+                                <input type="text" name="title" id="title" 
+                                       class="form-control form-control-lg" required />
+                                <label class="form-label" for="title">Project Title</label>
+                            </div>
+
+                            <div class="form-outline mb-4">
+                                <textarea class="form-control" name="description" 
+                                          id="description" rows="4" required></textarea>
+                                <label class="form-label" for="description">Project Description</label>
+                            </div>
+
+                            <!-- Objectives & Hypothesis -->
+                            <div class="card mb-4 shadow-2">
+                                <div class="card-body">
+                                    <h5 class="mb-3"><i class="fas fa-bullseye me-2"></i>Objectives</h5>
+                                    <textarea class="form-control" name="objectives" 
+                                              rows="4" placeholder="Enter project objectives (one per line)"></textarea>
+                                    
+                                    <hr class="my-4">
+                                    
+                                    <h5 class="mb-3"><i class="fas fa-question-circle me-2"></i>Hypothesis</h5>
+                                    <textarea class="form-control" name="hypothesis" 
+                                              rows="8" placeholder="Enter project hypothesis"></textarea>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Right Column -->
+                        <div class="col-lg-4">
+                            <!-- Technical Details -->
+                            <div class="card mb-4 shadow-2">
+                                <div class="card-body">
+                                    <h5 class="mb-3"><i class="fas fa-tools me-2"></i>Technical Details</h5>
+                                    
+                                    <div class="mb-3">
+                                        <label class="form-label">Start Date</label>
+                                        <input type="date" name="start_date" 
+                                               class="form-control" required>
+                                    </div>
+                                    
+                                    <!-- <div class="mb-3">
+                                        <label class="form-label">End Date</label>
+                                        <input type="date" name="end_date" 
+                                               class="form-control" required>
+                                    </div> -->
+                                    
+                                    <div class="mb-3">
+                                        <label class="form-label">Methodology</label>
+                                        <input type="text" name="methodology" 
+                                               class="form-control" 
+                                               placeholder="E.g., Agile, Waterfall">
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <label class="form-label">Tools Used</label>
+                                        <input type="text" name="tools_used" 
+                                               class="form-control" 
+                                               placeholder="Comma separated list (e.g., Python, Django)">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Advisor & Resources Section -->
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <!-- Advisor Selection -->
+                            <div class="card shadow-2 mb-4">
+                                <div class="card-body">
+                                    <h5 class="mb-3"><i class="fas fa-chalkboard-teacher me-2"></i>Select Advisor</h5>
+                                    <div class="list-group" style="max-height: 200px; overflow-y: auto;">
+                                        {% for teacher in teachers %}
+                                        <label class="list-group-item d-flex align-items-center">
+                                            <input class="form-check-input me-3" type="radio" name="advisor"
+                                                   value="{{ teacher.id }}" required {% if forloop.first %}checked{% endif %}>
+                                            <div class="d-flex align-items-center">
+                                                <img src="{{ teacher.imageURL }}" 
+                                                     class="rounded-circle me-3" 
+                                                     width="40" height="40" 
+                                                     alt="{{ teacher.user.username }}">
+                                                <div>
+                                                    <h6 class="mb-0">{{ teacher.user.username }}</h6>
+                                                    <small class="text-muted">{{ teacher.user.email }}</small>
+                                                </div>
+                                            </div>
+                                        </label>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <!-- Project Resources -->
+                            <div class="card shadow-2 mb-4">
+                                <div class="card-body">
+                                    <h5 class="mb-3"><i class="fas fa-link me-2"></i>Project Resources</h5>
+                                    
+                                    <div class="mb-3">
+                                        <label class="form-label">Cover Image</label>
+                                        <input type="file" class="form-control" 
+                                               name="project_picture" accept="image/*">
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <label class="form-label">Project File</label>
+                                        <input type="file" class="form-control" name="project_file" id="projectFile" accept="/*">
+                                        <small id="fileError" style="color: red; display: none;">File size should not exceed 10MB</small>
+                                    </div>
+                                    
+                                    <script>
+                                        document.getElementById('projectFile').addEventListener('change', function() {
+                                            const file = this.files[0]; // Get the selected file
+                                            if (file && file.size > 10 * 1024 * 1024) { // Check if > 10MB
+                                                document.getElementById('fileError').style.display = 'block';
+                                                this.value = ''; // Reset file input
+                                            } else {
+                                                document.getElementById('fileError').style.display = 'none';
+                                            }
+                                        });
+                                    </script>
+                                    
+                                    
+                                    <div class="mb-3">
+                                        <label class="form-label">Publication Link</label>
+                                        <input type="url" name="publication_link" 
+                                               class="form-control" 
+                                               placeholder="https://example.com/publication">
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <label class="form-label">Dataset Link</label>
+                                        <input type="url" name="dataset_link" 
+                                               class="form-control" 
+                                               placeholder="https://example.com/dataset">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Github Link</label>
+                                        <input type="url" name="github_link" 
+                                               class="form-control" 
+                                               placeholder="https://example.com/github">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Team Members Section -->
+                    <div class="card shadow-2 mb-4">
+                        <div class="card-body">
+                            <h5 class="mb-4"><i class="fas fa-users me-2"></i>Select Team Members (Max 3)</h5>
+                            
+                            <!-- Selected Students Preview -->
+                            <div class="d-flex flex-wrap gap-2 mb-4" id="selected-preview"></div>
+                    
+                            <!-- Search Bar -->
+                            <div class="input-group mb-4">
+                                <span class="input-group-text">
+                                    <i class="fas fa-search"></i>
+                                </span>
+                                <input type="text" class="form-control" 
+                                       id="student-search" placeholder="Search students by name...">
+                            </div>
+                    
+                            <!-- Student List -->
+                            <div class="row" style="max-height: 400px; overflow-y: auto;" id="student-list">
+                                {% for student in students %}
+                                <div class="col-md-4 mb-4 student-card">
+                                    <div class="card hover-shadow">
+                                        <div class="card-body d-flex align-items-center">
+                                            <div class="form-check me-3">
+                                                <input class="form-check-input student-checkbox" 
+                                                       type="checkbox" 
+                                                       name="students" 
+                                                       value="{{ student.id }}" 
+                                                       id="student{{ student.id }}"
+                                                       data-name="{{ student.user.username }}"
+                                                       data-image="{{ student.imageURL }}"
+                                                       onchange="updateSelection(this)">
+                                            </div>
+                                            <img src="{{ student.imageURL }}" 
+                                                 class="rounded-circle me-3" 
+                                                 width="45" height="45" 
+                                                 alt="{{ student.user.username }}">
+                                            <div class="flex-grow-1">
+                                                <h6 class="mb-0 student-name">{{ student.user.username }}</h6>
+                                                <small class="text-muted">{{ student.user.email | truncatechars:15 }}</small>
+                                            </div>
+                                            <select class="form-select form-select-sm w-25" 
+                                                    name="roles_{{ student.id }}">
+                                                <option value="leader">Leader</option>
+                                                <option value="developer">Developer</option>
+                                                <option value="tester">Tester</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <script>
+                    document.addEventListener('DOMContentLoaded', function() {
+                        // Initialize selection tracking
+                        let selectedStudents = new Set();
+                        
+                        // Update selection display
+                        function updatePreview() {
+                            const preview = document.getElementById('selected-preview');
+                            preview.innerHTML = '';
+                            
+                            selectedStudents.forEach(id => {
+                                const student = document.querySelector(`input[value="${id}"]`);
+                                const name = student.dataset.name;
+                                const image = student.dataset.image;
+
+                                console.log('User image: ',image)
+                                
+                                preview.innerHTML += `
+                                    <div class="selected-student-badge position-relative">
+                                        <img src="${image}" 
+                                             class="rounded-circle border border-primary" 
+                                             width="40" 
+                                             height="40"
+                                             title="${name}">
+                                        <button type="button" 
+                                                class="btn-close position-absolute top-0 end-0"
+                                                onclick="removeStudent('${id}')"></button>
+                                    </div>
+                                `;
+                            });
+                        }
+                    
+                        // Global function to handle selection
+                        window.updateSelection = function(checkbox) {
+                            if (checkbox.checked) {
+                                if (selectedStudents.size >= 3) {
+                                    checkbox.checked = false;
+                                    alert('Maximum 3 team members allowed');
+                                    return;
+                                }
+                                console.log('Selected value', checkbox.value)
+                                selectedStudents.add(checkbox.value);
+                            } else {
+                                selectedStudents.delete(checkbox.value);
+                            }
+                            
+                            // Update checkboxes state
+                            document.querySelectorAll('.student-checkbox').forEach(cb => {
+                                cb.disabled = selectedStudents.size >= 3 && !cb.checked;
+                            });
+                            
+                            updatePreview();
+                        };
+                    
+                        // Global function to remove student
+                        window.removeStudent = function(id) {
+                            const checkbox = document.querySelector(`input[value="${id}"]`);
+                            if (checkbox) {
+                                checkbox.checked = false;
+                                updateSelection(checkbox);
+                            }
+                        };
+                    
+                        // Initialize search functionality
+                        const searchInput = document.getElementById('student-search');
+                        searchInput.addEventListener('input', function() {
+                            const term = this.value.trim().toLowerCase();
+                            document.querySelectorAll('.student-card').forEach(card => {
+                                const name = card.querySelector('.student-name').textContent.toLowerCase();
+                                card.style.display = name.includes(term) ? 'block' : 'none';
+                            });
+                        });
+                    });
+                    </script>
+                    
+                    <style>
+                    .selected-student-badge {
+                        position: relative;
+                        margin: 0.25rem;
+                        transition: transform 0.2s;
+                    }
+                    
+                    .selected-student-badge:hover {
+                        transform: scale(1.1);
+                    }
+                    
+                    .selected-student-badge .btn-close {
+                        transform: scale(0.7);
+                        background: white;
+                        border-radius: 50%;
+                        padding: 2px;
+                    }
+                    
+                    .student-checkbox:disabled + img {
+                        opacity: 0.5;
+                        filter: grayscale(100%);
+                    }
+                    
+                    .student-checkbox:disabled ~ * {
+                        opacity: 0.5;
+                    }
+                    </style>
+            <!-- ===================================================================================================================== -->
+
+
+
+
+
+                    <!-- Submit Section -->
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="fas fa-plus-circle me-2"></i>Create Project
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+</main>
+{% endblock %}

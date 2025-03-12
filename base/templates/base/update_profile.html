@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" rel="stylesheet" />
+    <!-- MDB -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/8.1.0/mdb.min.css" rel="stylesheet" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.2/mdb.min.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    {% load static %}
+    <main class="container py-5">
+        <div class="row justify-content-center">
+
+            <div class="col-md-8 col-lg-6">
+                <button class="btn btn-info mb-2" onclick="history.back()">Back</button>
+
+                <div class="card shadow-3">
+
+                    <div class="card-header bg-primary text-white text-center py-4">
+
+                        <h3 class="mb-0"><i class="fas fa-user-edit me-2"></i>Update Profile</h3>
+                    </div>
+                    <div class="card-body p-4">
+                        <form method="POST" enctype="multipart/form-data" id="profile-form">
+                            {% csrf_token %}
+
+                            <!-- Profile Picture Preview -->
+                            <div class="text-center mb-4">
+                                {% if form.instance.profile_picture %}
+                                <img id="profile-preview" src="{{ form.instance.profile_picture.url }}" class="shadow-2"
+                                    width="150" height="auto" style="object-fit: cover; border-radius: 15px; ">
+                                {% else %}
+                                <img id="profile-preview" src="{% static 'images/default-profile.png' %}"
+                                    class="shadow-2" width="150" height="auto"
+                                    style="object-fit: cover; border-radius: 15px;">
+                                {% endif %}
+
+                            </div>
+
+                            <!-- Phone Field -->
+                            
+                            <div class="form-outline mb-4">
+                                {{ form.about }}
+                                <label class="form-label" for="{{ form.phone.id_for_label }}">About</label>
+                            </div>
+
+                            <div class="form-outline mb-4">
+                                {{ form.phone }}
+                                <label class="form-label" for="{{ form.phone.id_for_label }}">Phone Number</label>
+                                <small class="form-text text-danger" id="phone-error"></small>
+                            </div>
+                            <!-- Profile Picture Upload -->
+                            <div class="mb-4">
+                                <label class="form-label" for="{{ form.profile_picture.id_for_label }}">
+                                    Profile Picture
+                                </label>
+                                {{ form.profile_picture }}
+                                <small class="form-text text-muted">Max size: 2MB, Allowed formats: JPG, PNG</small>
+                            </div>
+
+                            <!-- Skills Field -->
+                            <div class="mb-4">
+                                <div class="form-outline">
+                                    <input type="text" id="skills-input" class="form-control"
+                                        value="{{ form.instance.skills }}">
+                                    <label class="form-label">Skills (comma separated)</label>
+                                </div>
+                                <div id="skills-container" class="d-flex flex-wrap gap-2 mt-2"></div>
+                                <small class="form-text text-danger" id="skills-error"></small>
+                                {{ form.skills.as_hidden }}
+                            </div>
+
+                            <!-- Submit Button -->
+                            <button type="submit" class="btn btn-primary btn-block">
+                                <i class="fas fa-save me-2"></i>Save Changes
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <style>
+        .skill-tag {
+            background-color: #e3f2fd;
+            border-radius: 15px;
+            padding: 4px 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .skill-tag-remove {
+            cursor: pointer;
+            color: #666;
+            font-size: 0.8rem;
+        }
+
+        .skill-tag-remove:hover {
+            color: #d32f2f;
+        }
+    </style>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Skill Tags Logic
+            const skillsInput = document.getElementById('skills-input');
+            const skillsContainer = document.getElementById('skills-container');
+            const hiddenSkillsField = document.getElementById('id_skills');
+
+            function updateSkills() {
+                const tags = Array.from(skillsContainer.querySelectorAll('.skill-tag'))
+                    .map(tag => tag.querySelector('span').textContent);
+                hiddenSkillsField.value = tags.join(',');
+            }
+
+            function createTag(text) {
+                const tag = document.createElement('div');
+                tag.className = 'skill-tag';
+                tag.innerHTML = `
+            <span>${text.trim()}</span>
+            <span class="skill-tag-remove">&times;</span>
+        `;
+                tag.querySelector('.skill-tag-remove').addEventListener('click', () => {
+                    tag.remove();
+                    updateSkills();
+                });
+                return tag;
+            }
+
+            // Initialize existing skills
+            hiddenSkillsField.value.split(',').forEach(skill => {
+                if (skill.trim()) skillsContainer.appendChild(createTag(skill));
+            });
+
+            skillsInput.addEventListener('keydown', (e) => {
+                if (['Enter', ','].includes(e.key)) {
+                    e.preventDefault();
+                    const value = skillsInput.value.trim();
+                    if (value) {
+                        skillsContainer.appendChild(createTag(value));
+                        skillsInput.value = '';
+                        updateSkills();
+                    }
+                }
+            });
+
+            // Profile Picture Preview
+            const profilePreview = document.getElementById('profile-preview');
+            document.getElementById('id_profile_picture').addEventListener('change', function (e) {
+                if (this.files && this.files[0]) {
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        profilePreview.src = e.target.result;
+                    }
+                    reader.readAsDataURL(this.files[0]);
+                }
+            });
+
+            // Form Validation
+            document.getElementById('profile-form').addEventListener('submit', function (e) {
+                let valid = true;
+
+                // Phone Validation
+                const phoneInput = document.getElementById('id_phone');
+                const phoneError = document.getElementById('phone-error');
+                const phoneRegex = /^[0-9]{11}$/;
+
+                if (phoneInput.value && !phoneRegex.test(phoneInput.value)) {
+                    phoneError.textContent = 'Please enter a valid 11-digit phone number';
+                    valid = false;
+                } else {
+                    phoneError.textContent = '';
+                }
+
+                // Skills Validation
+                const skillsError = document.getElementById('skills-error');
+                if (hiddenSkillsField.value === '') {
+                    skillsError.textContent = 'Please add at least one skill';
+                    valid = false;
+                } else {
+                    skillsError.textContent = '';
+                }
+
+                if (!valid) e.preventDefault();
+            });
+        });
+    </script>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/8.2.0/mdb.umd.min.js"></script>
+
+</body>
+
+</html>

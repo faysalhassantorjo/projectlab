@@ -1,0 +1,109 @@
+{% extends 'base/main.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+    /* Custom Styles */
+.avatar {
+    width: 120px;
+    height: 120px;
+    margin: 0 auto;
+    border: 3px solid #0d6efd;
+    border-radius: 50%;
+    overflow: hidden;
+}
+
+.card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+}
+
+.badge {
+    font-size: 0.9rem;
+    padding: 0.5rem 0.75rem;
+}
+
+.btn-success {
+    background-color: #198754;
+    border: none;
+    padding: 0.5rem 1.5rem;
+    transition: background-color 0.3s ease;
+}
+
+.btn-success:hover {
+    background-color: #157347;
+}
+
+.alert-info {
+    background-color: #e2f3ff;
+    border-color: #b6e0ff;
+    color: #0c5460;
+}
+</style>
+<main class="">
+    <div class="container-fluid py-5">
+
+    <div class="row">
+        <div class="col-12">
+            <h1 class="text-center mb-4">
+                <i class="fas fa-user-clock me-2"></i>Pending Student Approvals
+            </h1>
+            
+            <!-- Pending Students Grid -->
+            <div class="row g-4">
+                {% for student in pending_students %}
+                <div class="col-md-6 col-lg-4">
+                    <div class="card shadow-3 hover-shadow-lg">
+                        <div class="card-body text-center">
+                            <!-- Profile Picture -->
+                            <div class="avatar mx-auto mb-3">
+                                <img src="{{ student.imageURL }}" 
+                                     class="rounded-circle img-fluid" 
+                                     width="120" 
+                                     height="120" 
+                                     alt="{{ student.user.username }}"
+                                     style="object-fit: cover;">
+                            </div>
+                            
+                            <!-- Student Details -->
+                            <h5 class="card-title mb-1">{{ student.user.username }}</h5>
+                            <p class="text-muted mb-2">{{ student.user.email }}</p>
+                            
+                            <!-- Additional Info -->
+                            <div class="d-flex justify-content-center gap-2 mb-3">
+                                <span class="badge bg-primary">
+                                    <i class="fas fa-phone me-1"></i>{{ student.phone|default:"N/A" }}
+                                </span>
+                                <span class="badge bg-secondary">
+                                    <i class="fas fa-calendar me-1"></i>{{ student.created_at|date:"M d, Y" }}
+                                </span>
+                            </div>
+                            
+                            <!-- Approve Button -->
+                            <form method="POST" action="{% url 'approve_student' student.id %}">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-success btn-sm">
+                                    <i class="fas fa-check-circle me-1"></i>Approve
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="col-12 text-center">
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle me-2"></i>No pending approvals.
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+            
+</div>
+</main>
+{% endblock %}

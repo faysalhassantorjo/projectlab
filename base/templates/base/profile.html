@@ -1,0 +1,409 @@
+{% extends 'base/main.html' %}
+{% load static %}
+
+{% block content %}
+<main>
+    {% if student %}
+    <style>
+        .timeline {
+            position: relative;
+            padding-left: 30px;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 6px;
+            width: 2px;
+            height: 100%;
+            background: #e9ecef;
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -30px;
+            top: 5px;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #0d6efd;
+            border: 2px solid white;
+        }
+
+        .timeline-content {
+            background: white;
+            padding: 15px;
+            border-radius: 5px;
+        }
+
+        .list-group-item:hover {
+            transform: translateX(5px);
+            transition: transform 0.3s ease;
+        }
+    </style>
+    <div class="container py-5">
+        <div class="row g-4">
+            <!-- Left Column - Profile Info -->
+            <div class="col-lg-4">
+                <div class="card shadow-2 mb-4">
+                    <div class="card-body text-center">
+                        <!-- Profile Picture -->
+                    
+                        <div class="d-inline-flex position-relative" style="width: 100%;">
+                            <!-- <span class="position-absolute top-0 start-100 translate-middle p-1 bg-success  "
+                                style="font-size: 8px; color: #e9ecef;">
+                                <span class="">Teacher</span>
+                            </span> -->
+                            <img class="rounded-4 shadow-4" src="{{ student.imageURL }}" alt="Avatar"
+                                style="width: 100%; height: auto;">
+                        </div>
+                        <!-- Basic Info -->
+                        <h2 class="mb-1">{{ student.user.username }}</h2>
+                        <p class="text-muted mb-3">{{ student.user.email }}</p>
+                        {% if student.user.id == request.user.id %}
+                        <a href="{% url 'update_student_profile' %}" class="btn btn-warning mb-3">
+                            <i class="fas fa-edit me-2"></i>Edit Profile
+                        </a>
+                        {% endif %}
+                        <!-- Contact Info -->
+                        <div class="list-group list-group-flush">
+                            {% if student.phone %}
+                            <div class="list-group-item d-flex align-items-center">
+                                <i class="fas fa-phone me-3 text-primary"></i>
+                                <span>{{ student.phone }}</span>
+                            </div>
+                            {% endif %}
+
+                            <div class="list-group-item d-flex align-items-center">
+                                <i class="fas fa-envelope me-3 text-primary"></i>
+                                <span>{{ student.user.email }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    {% if request.user.id == student.user.id %}
+                    {% if student.is_approved %}
+                    <span class="badge badge-success p-2">
+                        Hello <strong>{{ request.user }}</strong>, your account is Approved
+                    </span>
+                    {% else %}
+                    <span class="badge badge-danger p-2">
+                        Hello <strong>{{ request.user }}</strong>, your account is pending approval
+                    </span>
+                    {% endif %}
+                    {% else %}
+                    {% if student.is_approved %}
+                    <span class="badge badge-success p-2">
+                        Approved Account
+                    </span>
+                    {% else %}
+                    <span class="badge badge-danger p-2">
+                        Pending Account
+                    </span>
+                    {% endif %}
+                    {% endif %}
+                </div>
+
+                <!-- Skills Section -->
+                <div class="card shadow-2 mb-4">
+                    <div class="card-body">
+                        <h5 class="mb-3"><i class="fas fa-tools me-2"></i>Skills</h5>
+                        <div class="d-flex flex-wrap gap-2" id="skills-container">
+                            {% for skill in skills %}
+                            <span class="badge ">{{ skill }}</span>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column - Main Content -->
+            <div class="col-lg-8">
+                <!-- About Section -->
+                <div class="card shadow-2 mb-4">
+                    <div class="card-body">
+                        <h3 class="mb-3"><i class="fas fa-user me-2"></i>About</h3>
+                        <p class="lead">
+                            {% if student.about %}
+                            {{student.about}}
+                            {% else %}
+                            No bio available.
+                            {% endif %}
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Projects Section -->
+                <div class="card shadow-2 mb-4">
+                    <div class="card-body">
+                        <h3 class="mb-4"><i class="fas fa-project-diagram me-2"></i>Projects</h3>
+
+                        <div class="list-group">
+                            {% for project in student.assigned_students.all %}
+                            <a href="{% url 'project_detail' pk=project.id %}"
+                                class="list-group-item list-group-item-action">
+                                <div class="d-flex w-100 justify-content-between">
+                                    <h5 class="mb-1">{{ project.title }}</h5>
+                                    <small>
+                                        {{ project.start_date|date:"M Y" }} -
+                                    </small>
+                                </div>
+                                <p class="mb-1">{{ project.description|truncatechars:100 }}</p>
+                                <small>Role:
+                                    {% for assignment in project.students_project.all %}
+                                    {% if assignment.user == student %}
+                                    {{ assignment.role }}
+                                    {% endif %}
+                                    {% endfor %}
+                                </small>
+                            </a>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Education Section -->
+                <!-- <div class="card shadow-2 mb-4">
+                    <div class="card-body">
+                        <h3 class="mb-4"><i class="fas fa-graduation-cap me-2"></i>Education</h3>
+
+                        <div class="timeline">
+                            <div class="timeline-item">
+                                <div class="timeline-content">
+                                    <h5>Bachelor of Science in Computer Science</h5>
+                                    <p class="text-muted mb-1">University of Example</p>
+                                    <small class="text-muted">2019 - 2023</small>
+                                </div>
+                            </div>
+
+                            <div class="timeline-item">
+                                <div class="timeline-content">
+                                    <h5>Higher Secondary Certificate</h5>
+                                    <p class="text-muted mb-1">Example College</p>
+                                    <small class="text-muted">2017 - 2019</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div> -->
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    {% if teacher %}
+    <div class="container py-5">
+        <div class="row g-4">
+            <!-- Left Column - Profile Info -->
+            <div class="col-lg-4">
+                <div class="card shadow-2 mb-4">
+                    <div class="card-body text-center">
+                        <!-- Profile Picture -->
+                        <!-- <img src="{{ teacher.imageURL }}" class="rounded-circle mb-3" width="150" height="150"
+                            alt="{{ teacher.user.username }}" style="object-fit: cover;"> -->
+                        <div class="d-inline-flex position-relative"  style="width: 100%;">
+                            <span class="position-absolute top-0 start-100 translate-middle p-1 bg-success  "
+                                style="font-size: 8px; color: #e9ecef;">
+                                <span class="">Teacher</span>
+                            </span>
+                            <img class="rounded-4 shadow-4" src="{{ teacher.imageURL }}" alt="Avatar"
+                                style="width: 100%; height: auto;">
+                        </div>
+                        <!-- Basic Info -->
+                        <h2 class="mb-1">{{ teacher.user.username }}</h2>
+                        <p class="text-muted mb-3">{{ teacher.user.email }}</p>
+
+                        <!-- Edit Profile Button -->
+                        {% if request.user == teacher.user %}
+                        <a href="" class="btn btn-warning mb-3">
+                            <i class="fas fa-edit me-2"></i>Edit Profile
+                        </a>
+                        {% endif %}
+
+                        <!-- Contact Info -->
+                        <div class="list-group list-group-flush">
+                            {% if teacher.phone %}
+                            <div class="list-group-item d-flex align-items-center">
+                                <i class="fas fa-phone me-3 text-primary"></i>
+                                <span>{{ teacher.phone }}</span>
+                            </div>
+                            {% endif %}
+
+                            <div class="list-group-item d-flex align-items-center">
+                                <i class="fas fa-envelope me-3 text-primary"></i>
+                                <span>{{ teacher.user.email }}</span>
+                            </div>
+
+                            {% if teacher.office_location %}
+                            <div class="list-group-item d-flex align-items-center">
+                                <i class="fas fa-map-marker-alt me-3 text-primary"></i>
+                                <span>{{ teacher.office_location }}</span>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Expertise Section -->
+                <div class="card shadow-2 mb-4">
+                    <div class="card-body">
+                        <h5 class="mb-3"><i class="fas fa-lightbulb me-2"></i>Expertise</h5>
+                        <div class="d-flex flex-wrap gap-2">
+                            {% for expertise in teacher.expertise.all %}
+                            <span class="badge bg-primary">{{ expertise.name }}</span>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column - Main Content -->
+            <div class="col-lg-8">
+                <!-- About Section -->
+                <div class="card shadow-2 mb-4">
+                    <div class="card-body">
+                        <h3 class="mb-3"><i class="fas fa-user me-2"></i>About </h3>
+                        <p class="lead">
+                            {% if teacher.about %}
+                            {{ teacher.about }}
+                            {% else %}
+                            No bio available. Add one to tell others about yourself!
+                            {% endif %}
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Advised Projects Section -->
+                <div class="card shadow-2 mb-4">
+                    <div class="card-body">
+                        <h3 class="mb-4"><i class="fas fa-project-diagram me-2"></i>Advised Projects</h3>
+
+                        {% if teacher.project_advisor.all %}
+                        <div class="list-group">
+                            {% for project in teacher.project_advisor.all %}
+                            <a href="{% url 'project_detail' pk=project.id %}"
+                                class="list-group-item list-group-item-action">
+                                <div class="d-flex w-100 justify-content-between">
+                                    <h5 class="mb-1">{{ project.title }}</h5>
+                                    <small>{{ project.created_at|date:"M Y" }} -
+                                        {% if project.end_date %}
+                                        {{ project.end_date|date:"M Y" }}
+                                        {% else %}
+                                        Present
+                                        {% endif %}
+                                    </small>
+                                </div>
+                                <p class="mb-1">{{ project.description|truncatechars:100 }}</p>
+                                <!-- <small>Status: {{ project.get_status_display }}</small> -->
+                            </a>
+                            {% endfor %}
+                        </div>
+                        {% else %}
+                        <div class="alert alert-info">
+                            No projects are being advised currently.
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Education & Experience Section -->
+                <div class="card shadow-2 mb-4">
+                    <div class="card-body">
+                        <h3 class="mb-4"><i class="fas fa-briefcase me-2"></i>Experience</h3>
+
+                        {% if teacher.experience.all %}
+                        <div class="timeline">
+                            {% for exp in teacher.experience.all %}
+                            <div class="timeline-item">
+                                <div class="timeline-content">
+                                    <h5>{{ exp.position }}</h5>
+                                    <p class="text-muted mb-1">{{ exp.organization }}</p>
+                                    <small class="text-muted">
+                                        {{ exp.start_date|date:"M Y" }} -
+                                        {% if exp.end_date %}
+                                        {{ exp.end_date|date:"M Y" }}
+                                        {% else %}
+                                        Present
+                                        {% endif %}
+                                    </small>
+                                    {% if exp.description %}
+                                    <p class="mt-2">{{ exp.description }}</p>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        {% else %}
+                        <div class="alert alert-info">
+                            No experience information added yet.
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+</main>
+
+<style>
+    .timeline {
+        position: relative;
+        padding-left: 30px;
+    }
+
+    .timeline::before {
+        content: '';
+        position: absolute;
+        left: 6px;
+        width: 2px;
+        height: 100%;
+        background: #e9ecef;
+    }
+
+    .timeline-item {
+        position: relative;
+        margin-bottom: 20px;
+    }
+
+    .timeline-item::before {
+        content: '';
+        position: absolute;
+        left: -30px;
+        top: 5px;
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        background: #0d6efd;
+        border: 2px solid white;
+    }
+
+    .timeline-content {
+        background: white;
+        padding: 15px;
+        border-radius: 5px;
+    }
+
+    .list-group-item:hover {
+        transform: translateX(5px);
+        transition: transform 0.3s ease;
+    }
+</style>
+</main>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const colors = ['bg-primary', 'bg-success', 'bg-info', 'bg-warning', 'bg-danger'];
+        const badges = document.querySelectorAll('#skills-container .badge');
+
+        badges.forEach((badge, index) => {
+            const color = colors[index % colors.length];
+            badge.classList.add(color);
+        });
+    });
+</script>
+{% endblock %}

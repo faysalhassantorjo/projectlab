@@ -1,0 +1,85 @@
+{% extends 'base/main.html' %}
+{% load static %}
+
+{% block content %}
+
+
+<!--Main layout-->
+<main style="margin-top: 58px;">
+  <div class="container mt-4">
+    <div class="row">
+      {% for project in projects %}
+      <div class="col-lg-6 mb-4">
+
+        <div class="card position-relative hover-overlay ripple shadow-2-strong rounded-5 bg-dark"
+          style="height: 400px; overflow: hidden;">
+          <!-- Card Image -->
+          <img src="{{project.imageURL}}" class="card-img-top h-100 object-fit-cover" style="opacity: .7;" alt="Project Cover">
+
+          <!-- Overlay Content -->
+          <div class="card-img-overlay d-flex flex-column justify-content-between">
+
+            <!-- Top Section - Creator Info & Actions -->
+            <div class="d-flex justify-content-between align-items-start">
+              <!-- Creator Info -->
+              <a href="{% url 'teacher_profile' pk=project.advisor.id %}">
+                <div class="d-flex align-items-center p-2 rounded-3 blur" >
+                  <img src="{{project.advisor.imageURL}}" class="rounded-circle me-2" width="32" height="32"
+                    alt="Creator">
+                  <div>
+                    <p class="mb-0 small fw-bold text-capitalize text-light">{{project.advisor.user}}</p>
+                    <p class="mb-0 time small">2 hours ago</p>
+                  </div>
+                </div>
+              </a>
+              <!-- Action Buttons -->
+              <!-- <div class="btn-group blur">
+                <button class="btn btn-sm px-2 py-1">
+                  <i class="fas fa-heart text-danger"></i>
+                </button>
+                <button class="btn btn-sm px-2 py-1" data-project_id="{{ project.id }}" style="z-index: 9;"
+                  onclick="window.location='/update-project/' + this.getAttribute('data-project_id')">
+                  <i class="fas fa-edit text-primary"></i>
+                </button>
+
+                <button class="btn btn-sm px-2 py-1">
+                  <i class="fas fa-trash text-danger"></i>
+                </button>
+              </div> -->
+            </div>
+
+            <!-- Bottom Section - Card Content -->
+            <a href="{% url 'project_detail' pk=project.id %}">
+              <div class="p-3 rounded-4 blur">
+                <h5 class="card-title text-white mb-2">{{project.title}}</h5>
+                <p class="card-text text-white-80 small mb-3 text-secondary">
+                  {{project.description|truncatechars:100}}
+                </p>
+
+                <div class="d-flex align-items-center">
+                  <h6 class="text-white mb-0 me-2 small">Team</h6>
+                  <div class="d-flex">
+
+                    {% for assigned_stu in project.students.all %}
+
+                    <img src="{{assigned_stu.imageURL}}" class="rounded-circle me-2" width="30" height="30"
+                      alt="{{assigned_stu.imageURL}}">
+                    {% endfor %}
+
+                  </div>
+                </div>
+              </div>
+            </a>
+          </div>
+        </div>
+
+      </div>
+      {% endfor %}
+    </div>
+
+  </div>
+</main>
+<!--Main layout-->
+
+<!-- MDB -->
+{% endblock %}

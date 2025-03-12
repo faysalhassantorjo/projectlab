@@ -1,0 +1,97 @@
+{% extends 'base/main.html' %}
+{% load static %}
+
+{% block content %}
+<main>
+    <div class="container py-5">
+        <div class="card shadow-5-strong">
+            <!-- Change header for update -->
+            <div class="card-header bg-primary text-white py-3">
+                <h2 class="mb-0">
+                    <i class="fas fa-edit me-2"></i>
+                    {% if update_mode %}Update Project{% else %}Create New Project{% endif %}
+                </h2>
+            </div>
+
+            <!-- Add current image preview -->
+            {% if update_mode and project.project_picture %}
+            <div class="text-center mt-3">
+                <img src="{{ project.imageURL }}" 
+                     class="img-thumbnail" 
+                     style="max-width: 200px;"
+                     alt="Current project image">
+                <p class="text-muted mt-2">Current Image</p>
+            </div>
+            {% endif %}
+
+            <!-- Form -->
+            <div class="card-body p-4">
+                <form method="POST" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    
+                    <!-- Pre-fill existing values -->
+                    <div class="form-outline mb-4">
+                        <input type="text" name="title" id="title" 
+                               class="form-control form-control-lg" 
+                               value="{{ project.title|default:'' }}" required>
+                        <label class="form-label" for="title">Project Title</label>
+                    </div>
+
+                    <!-- Add similar value pre-filling for other fields -->
+                    <div class="form-outline mb-4">
+                        <textarea class="form-control" name="description" 
+                                  id="description" rows="4" required>
+                            {{ project.description|default:'' }}
+                        </textarea>
+                        <label class="form-label" for="description">Project Description</label>
+                    </div>
+
+                    <!-- Pre-select advisor -->
+                    {% for teacher in teachers %}
+                    <label class="list-group-item d-flex align-items-center">
+                        <input class="form-check-input me-3" type="radio" name="advisor"
+                               value="{{ teacher.id }}" required 
+                               {% if teacher.id == project.advisor.id %}checked{% endif %}>
+                        <!-- ... rest of advisor template ... -->
+                    </label>
+                    {% endfor %}
+
+                    <!-- Pre-select team members -->
+                    {% for student in students %}
+                    <div class="col-md-4 mb-4 student-card">
+                        <div class="card hover-shadow">
+                            <div class="card-body d-flex align-items-center">
+                                <div class="form-check me-3">
+                                    <input class="form-check-input" type="checkbox" 
+                                           name="students" value="{{ student.id }}" 
+                                           id="student{{ student.id }}"
+                                           {% if student in project.students.all %}checked{% endif %}>
+                                </div>
+                                <!-- ... rest of student template ... -->
+                                <select class="form-select form-select-sm w-25" 
+                                        name="roles_{{ student.id }}">
+                                    {% for role in roles %}
+                                    <option value="{{ role.0 }}" 
+                                            {% if role.0 == student_role %}selected{% endif %}>
+                                        {{ role.1 }}
+                                    </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+
+                    <!-- Update button -->
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-warning btn-lg">
+                            <i class="fas fa-save me-2"></i>
+                            {% if update_mode %}Update Project{% else %}Create Project{% endif %}
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</main>
+{% endblock %}

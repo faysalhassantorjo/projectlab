@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lab Project Manager</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.0/mdb.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        /* Custom Styles */
+        .hero-section {
+            background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('https://cdn.pixabay.com/photo/2017/06/14/08/20/map-of-the-world-2401458_1280.jpg');
+            background-size: cover;
+            background-position: center;
+            color: white;
+            padding: 150px 0;
+            text-align: center;
+            height: 70vh;
+        }
+
+        .hero-section h1 {
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+        }
+
+        .hero-section p {
+            font-size: 1.25rem;
+            margin-bottom: 2rem;
+        }
+
+        .feature-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: none;
+            border-radius: 15px;
+            overflow: hidden;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .feature-card .icon-lg {
+            font-size: 3rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .testimonial-card {
+            border-left: 4px solid #3498db;
+            background: #fff;
+            border-radius: 10px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .testimonial-card blockquote {
+            font-size: 1rem;
+            color: #555;
+        }
+
+        .footer {
+            background: #2c3e50;
+            color: white;
+            padding: 2rem 0;
+        }
+
+        .footer a {
+            color: #3498db;
+            text-decoration: none;
+        }
+
+        .footer a:hover {
+            color: #1abc9c;
+        }
+
+        .navbar {
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                <i class="fas fa-flask me-2"></i>LabProject
+            </a>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                {% if user.is_authenticated %}
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="btn btn-outline-light" href="/dashboard">Dashboard</a>
+                    </li>
+                </ul>
+                {% else %}
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="btn btn-outline-light" href="">Teacher Login</a>
+                    </li>
+                    <li class="nav-item ms-2">
+                        <a class="btn btn-primary" href="{% url 'student_login' %}">Student Access</a>
+                    </li>
+                </ul>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="container">
+            <h1>Streamline Your Lab Projects</h1>
+            <p>Efficient project management for academic laboratories</p>
+            <div class="d-flex gap-3 justify-content-center">
+                <a class="btn btn-lg btn-light">
+                    <i class="fas fa-chalkboard-teacher me-2"></i>Teacher Setup
+                </a>
+                <a href="/explore" class="btn btn-lg btn-outline-light">
+                    <i class="fas fa-binoculars me-2"></i>Explore Projects
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="py-5" id="features">
+        <div class="container">
+            <h2 class="text-center mb-5">Key Features</h2>
+            <div class="row g-4">
+                <!-- Feature 1 -->
+                <div class="col-md-4">
+                    <div class="card feature-card h-100 shadow-3">
+                        <div class="card-body text-center p-4">
+                            <div class="icon-lg text-primary mb-4">
+                                <i class="fas fa-project-diagram"></i>
+                            </div>
+                            <h4 class="mb-3">Project Creation</h4>
+                            <p class="text-muted">Teachers can create lab projects with detailed specifications and requirements.</p>
+                        </div>
+                    </div>
+                </div>
+                <!-- Feature 2 -->
+                <div class="col-md-4">
+                    <div class="card feature-card h-100 shadow-3">
+                        <div class="card-body text-center p-4">
+                            <div class="icon-lg text-success mb-4">
+                                <i class="fas fa-users-cog"></i>
+                            </div>
+                            <h4 class="mb-3">Student Assignment</h4>
+                            <p class="text-muted">Teachers can assign students to projects with role management.</p>
+                        </div>
+                    </div>
+                </div>
+                <!-- Feature 3 -->
+                <div class="col-md-4">
+                    <div class="card feature-card h-100 shadow-3">
+                        <div class="card-body text-center p-4">
+                            <div class="icon-lg text-info mb-4">
+                                <i class="fas fa-tasks"></i>
+                            </div>
+                            <h4 class="mb-3">Progress Tracking</h4>
+                            <p class="text-muted">Monitor project milestones and student submissions in real-time.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section class="py-5">
+        <div class="container">
+            <h2 class="text-center mb-5">What Users Say</h2>
+            <div class="row g-4">
+                <div class="col-md-6">
+                    <div class="card h-100 shadow-2">
+                        <div class="card-body testimonial-card">
+                            <blockquote class="blockquote mb-0">
+                                <p class="text-muted">"This system revolutionized how we manage lab projects. The assignment and tracking features are invaluable."</p>
+                                <footer class="blockquote-footer mt-3">
+                                    Dr. Sarah Johnson, <cite>Physics Department</cite>
+                                </footer>
+                            </blockquote>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card h-100 shadow-2">
+                        <div class="card-body testimonial-card">
+                            <blockquote class="blockquote mb-0">
+                                <p class="text-muted">"Finally a system that understands academic lab workflows. Makes collaboration seamless!"</p>
+                                <footer class="blockquote-footer mt-3">
+                                    Michael Chen, <cite>Research Student</cite>
+                                </footer>
+                            </blockquote>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="row g-4">
+                <div class="col-md-6">
+                    <h5><i class="fas fa-flask me-2"></i>LabProject</h5>
+                    <p class="text-muted">Academic Project Management System</p>
+                </div>
+                <div class="col-md-3">
+                    <h5>Quick Links</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="#features" class="text-white text-decoration-none">Features</a></li>
+                        <li><a href="#contact" class="text-white text-decoration-none">Contact</a></li>
+                        <li><a href="#" class="text-white text-decoration-none">Teacher Portal</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-3">
+                    <h5>Contact</h5>
+                    <ul class="list-unstyled">
+                        <li class="text-muted">labproject@university.edu</li>
+                        <li class="text-muted">+1 (555) 123-4567</li>
+                    </ul>
+                </div>
+            </div>
+            <hr class="my-4">
+            <p class="text-center text-muted mb-0">&copy; 2023 LabProject. Academic Use Only.</p>
+        </div>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.0/mdb.min.js"></script>
+</body>
+</html>
