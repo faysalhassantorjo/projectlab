@@ -1,0 +1,14 @@
+services:
+  - type: web
+    name: projectlab
+    env: python
+    buildCommand: "pip install -r requirements.txt && python manage.py collectstatic --noinput"
+    startCommand: "gunicorn projectlab.wsgi:application"
+    plan: free
+    envVars:
+      # - key: DATABASE_URL
+      #   sync: false
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DEBUG
+        value: "False"
