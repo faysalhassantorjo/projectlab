@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dataset Cards</title>
+  <!-- Font Awesome -->
+  <link
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    rel="stylesheet"
+  />
+  <!-- Google Fonts -->
+  <link
+    href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap"
+    rel="stylesheet"
+  />
+  <!-- MDB -->
+  <link
+    href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.0/mdb.min.css"
+    rel="stylesheet"
+  />
+</head>
+<body>
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="#">Dataset Hub</a>
+      <button
+        class="navbar-toggler"
+        type="button"
+        data-mdb-toggle="collapse"
+        data-mdb-target="#navbarNav"
+        aria-controls="navbarNav"
+        aria-expanded="false"
+        aria-label="Toggle navigation"
+      >
+        <i class="fas fa-bars"></i>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto">
+
+          <!-- Contribute Button in Navbar -->
+          <li class="nav-item">
+            <a href="{% url 'create_dataset' %}" class="btn btn-primary btn-sm">
+              <i class="fas fa-plus me-1"></i> Contribute
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <div class="container my-5">
+    <!-- Call-to-Action Section -->
+    <div class="text-center mb-5">
+      <h2>Want to contribute and publish your dataset?</h2>
+      <p class="lead">Share your dataset with the community and help others in their research.</p>
+      <a href="{% url 'create_dataset' %}" class="btn btn-primary btn-lg">
+        <i class="fas fa-plus me-2"></i> Create Dataset
+      </a>
+    </div>
+
+    <!-- Datasets Section -->
+    <h2 class="text-center mb-4">Datasets</h2>
+    <div class="row">
+      {% for dataset in datasets %}
+      <div class="col-md-6 col-lg-4 mb-4">
+        <div class="card h-100 shadow-sm">
+          <div class="card-body">
+            <!-- Dataset Icon -->
+            <div class="text-center mb-3">
+              {% if dataset.is_private %}
+                <i class="fas fa-lock fa-3x text-danger"></i>
+              {% else %}
+                <i class="fas fa-database fa-3x text-primary"></i>
+              {% endif %}
+            </div>
+            <!-- Dataset Title -->
+            <h5 class="card-title text-center">{{ dataset.title }}</h5>
+            <!-- Short Description -->
+            <p class="card-text text-muted text-center">
+              A collection of data for research and analysis. Uploaded by <strong>{{ dataset.uploaded_by }}</strong>.
+            </p>
+            <!-- Metadata -->
+            <ul class="list-group list-group-flush">
+              <li class="list-group-item">
+                <i class="fas fa-calendar-alt me-2"></i>
+                <strong>Uploaded At:</strong> {{ dataset.uploaded_at }}
+              </li>
+              <li class="list-group-item">
+                <i class="fas fa-download me-2"></i>
+                <strong>Downloads:</strong> {{ dataset.downloaded_number }}
+              </li>
+              <li class="list-group-item">
+                <i class="fas fa-lock me-2"></i>
+                <strong>Private:</strong> {% if dataset.is_private %}Yes{% else %}No{% endif %}
+              </li>
+              <li class="list-group-item">
+                <i class="fa-solid fa-eye me-2"></i>
+                <a href="{% url 'dataset_download_history' dataset.id %}"> See Details</a>
+              </li>
+            </ul>
+
+            <!-- Buttons -->
+            <div class="card-footer bg-transparent d-flex justify-content-between">
+              {% if dataset.dataset_link %}
+              {% if dataset.is_private %}
+              <a  class="btn btn-secondary btn-sm" target="_blank">
+                <i class="fas fa-external-link-alt me-1"></i> Visit Link
+              </a>
+              {% else %}
+              <a href="{{ dataset.dataset_link }}" class="btn btn-primary btn-sm" target="_blank">
+                <i class="fas fa-external-link-alt me-1"></i> Visit Link
+              </a>
+              {% endif %}
+              {% endif %}
+
+              {% if dataset.file %}
+                {% if dataset.is_private %}
+                  <button class="btn btn-secondary btn-sm" disabled>
+                    <i class="fas fa-lock me-1"></i> Private
+                  </button>
+                {% else %}
+                  <!-- Button to trigger download modal -->
+                  <button type="button" class="btn btn-success btn-sm" data-mdb-toggle="modal" data-mdb-target="#downloadModal{{ dataset.id }}">
+                    <i class="fas fa-download me-1"></i> Download
+                  </button>
+                {% endif %}
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Download Modal for Non-Private Datasets -->
+      {% if not dataset.is_private and dataset.file %}
+      <div class="modal fade" id="downloadModal{{ dataset.id }}" tabindex="-1" aria-labelledby="downloadModalLabel{{ dataset.id }}" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="downloadModalLabel{{ dataset.id }}">Download Dataset</h5>
+              <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <form id="downloadForm{{ dataset.id }}" method="POST" action="{% url 'download_dataset' dataset.id %}">
+                {% csrf_token %}
+                <!-- Username -->
+                <div class="form-outline mb-4">
+                  <input type="text" name="username" id="username{{ dataset.id }}" class="form-control" required />
+                  <label class="form-label" for="username{{ dataset.id }}">Your Name</label>
+                </div>
+                <!-- Email -->
+                <div class="form-outline mb-4">
+                  <input type="email" name="gmail" id="gmail{{ dataset.id }}" class="form-control" required />
+                  <label class="form-label" for="gmail{{ dataset.id }}">Your Email</label>
+                </div>
+                <!-- University -->
+                <div class="form-outline mb-4">
+                  <input type="text" name="university" id="university{{ dataset.id }}" class="form-control" />
+                  <label class="form-label" for="university{{ dataset.id }}">Your University (Optional)</label>
+                </div>
+              </form>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-mdb-dismiss="modal">Close</button>
+              <button type="submit" form="downloadForm{{ dataset.id }}" class="btn btn-primary"  data-mdb-dismiss="modal">Download</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endif %}
+      {% endfor %}
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="bg-light text-center text-lg-start">
+    <div class="text-center p-3" style="background-color: rgba(0, 0, 0, 0.1);">
+      © 2023 Dataset Hub. All rights reserved.
+    </div>
+  </footer>
+
+  <!-- MDB JS -->
+  <script
+    type="text/javascript"
+    src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.0/mdb.min.js"
+  ></script>
+</body>
+</html>

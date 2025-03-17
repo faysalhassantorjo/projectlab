@@ -1,6 +1,6 @@
 # forms.py
 from django import forms
-from .models import Student
+from .models import Student, Dataset
 import re
 
 class StudentProfileForm(forms.ModelForm):
@@ -41,3 +41,42 @@ class StudentProfileForm(forms.ModelForm):
         if not skills:
             raise forms.ValidationError('At least one skill is required')
         return skills
+    
+from .models import News
+
+class NewsForm(forms.ModelForm):
+    class Meta:
+        model = News
+        fields = ['title', 'content', 'image']
+        
+
+class DatasetForm(forms.ModelForm):
+    class Meta:
+        model = Dataset
+        fields = ['title', 'dataset_link', 'file', 'is_private']
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        # Apply MDB styling to each field
+        self.fields['title'].widget.attrs.update({
+            'class': 'form-control',
+            'style': 'rows:10',
+            'placeholder': 'Enter dataset title',
+        })
+        self.fields['dataset_link'].widget.attrs.update({
+            'class': 'form-control',
+            'placeholder': 'Enter dataset link (optional)',
+        })
+        self.fields['file'].widget.attrs.update({
+            'class': 'form-control',
+        })
+        self.fields['is_private'].widget.attrs.update({
+            'class': 'form-check-input',
+        })
+
+        # Add labels with MDB styling
+        self.fields['title'].label = 'Title'
+        self.fields['dataset_link'].label = 'Dataset Link'
+        self.fields['file'].label = 'Upload File'
+        self.fields['is_private'].label = 'Private Dataset'

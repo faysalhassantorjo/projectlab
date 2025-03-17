@@ -8,50 +8,127 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         /* Custom Styles */
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: #f8f9fa;
+        }
+
+        /* Gradient Background for Hero Section */
         .hero-section {
-            background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('https://cdn.pixabay.com/photo/2017/06/14/08/20/map-of-the-world-2401458_1280.jpg');
-            background-size: cover;
-            background-position: center;
+            background: linear-gradient(135deg, #6a11cb, #2575fc);
             color: white;
             padding: 150px 0;
             text-align: center;
-            height: 70vh;
+            position: relative;
+            overflow: hidden;
         }
 
         .hero-section h1 {
-            font-size: 3.5rem;
+            font-size: 4rem;
             font-weight: 700;
             margin-bottom: 1.5rem;
+            animation: fadeInDown 1s ease;
         }
 
         .hero-section p {
-            font-size: 1.25rem;
+            font-size: 1.5rem;
             margin-bottom: 2rem;
+            animation: fadeInUp 1s ease;
         }
 
+        .hero-section .btn {
+            font-size: 1.2rem;
+            padding: 10px 30px;
+            animation: fadeIn 1.5s ease;
+        }
+
+        /* Animated Background Effect */
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 10%, transparent 10.01%);
+            background-size: 20px 20px;
+            animation: moveBackground 20s linear infinite;
+            opacity: 0.5;
+        }
+
+        /* Keyframes for Animations */
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes moveBackground {
+            from {
+                transform: translate(0, 0);
+            }
+            to {
+                transform: translate(50%, 50%);
+            }
+        }
+
+        /* Feature Cards */
         .feature-card {
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            background: white;
             border: none;
             border-radius: 15px;
-            overflow: hidden;
+            padding: 2rem;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
 
         .feature-card:hover {
             transform: translateY(-10px);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
         }
 
         .feature-card .icon-lg {
             font-size: 3rem;
             margin-bottom: 1.5rem;
+            color: #2575fc;
         }
 
+        /* Testimonials Section */
         .testimonial-card {
-            border-left: 4px solid #3498db;
-            background: #fff;
+            background: white;
+            border-left: 4px solid #2575fc;
             border-radius: 10px;
             padding: 1.5rem;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .testimonial-card:hover {
+            transform: translateY(-5px);
         }
 
         .testimonial-card blockquote {
@@ -59,6 +136,7 @@
             color: #555;
         }
 
+        /* Footer */
         .footer {
             background: #2c3e50;
             color: white;
@@ -66,40 +144,111 @@
         }
 
         .footer a {
-            color: #3498db;
+            color: #2575fc;
             text-decoration: none;
         }
 
         .footer a:hover {
-            color: #1abc9c;
+            color: #6a11cb;
         }
 
+        /* Menubar */
         .navbar {
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            background: white;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .navbar-brand {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #2575fc !important;
+        }
+
+        .navbar-nav .nav-link {
+            font-size: 1rem;
+            font-weight: 500;
+            color: #333 !important;
+            margin: 0 10px;
+            transition: color 0.3s ease;
+        }
+
+        .navbar-nav .nav-link:hover {
+            color: #6a11cb !important;
+        }
+
+        .navbar-nav .nav-link.active {
+            color: #6a11cb !important;
+            font-weight: 600;
+        }
+
+        /* Buttons */
+        .btn-primary {
+            background: #2575fc;
+            border: none;
+            transition: background 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            background: #6a11cb;
+        }
+
+        .btn-outline-primary {
+            border-color: #2575fc;
+            color: #2575fc;
+            transition: all 0.3s ease;
+        }
+
+        .btn-outline-primary:hover {
+            background: #2575fc;
+            color: white;
         }
     </style>
 </head>
 <body>
 
     <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-light fixed-top">
         <div class="container">
             <a class="navbar-brand" href="#">
                 <i class="fas fa-flask me-2"></i>LabProject
             </a>
+            <button class="navbar-toggler" type="button" data-mdb-toggle="collapse" data-mdb-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <i class="fas fa-bars"></i>
+            </button>
             <div class="collapse navbar-collapse" id="navbarNav">
-                {% if user.is_authenticated %}
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
-                        <a class="btn btn-outline-light" href="/dashboard">Dashboard</a>
+                        <a class="nav-link" href="#about">About Us</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/all-member">People</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/explore">Projects</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/datasets">Datasets</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#publications">Publications</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'latest_news' %}">Latest News</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#contact">Contact</a>
+                    </li>
+                </ul>
+                {% if user.is_authenticated %}
+                <ul class="navbar-nav ms-3">
+                    <li class="nav-item">
+                        <a class="btn btn-outline-primary" href="/dashboard">Dashboard</a>
                     </li>
                 </ul>
                 {% else %}
-                <ul class="navbar-nav ms-auto">
-                    <!-- <li class="nav-item">
-                        <a class="btn btn-outline-light" href="">Teacher Login</a>
-                    </li> -->
-                    <li class="nav-item ms-2">
+                <ul class="navbar-nav ms-3">
+                    <li class="nav-item">
                         <a class="btn btn-primary" href="{% url 'student_login' %}">Student Access</a>
                     </li>
                 </ul>
@@ -114,10 +263,7 @@
             <h1>Streamline Your Lab Projects</h1>
             <p>Efficient project management for academic laboratories</p>
             <div class="d-flex gap-3 justify-content-center">
-                <!-- <a class="btn btn-lg btn-light">
-                    <i class="fas fa-chalkboard-teacher me-2"></i>Teacher Setup
-                </a> -->
-                <a href="/explore" class="btn btn-lg btn-light">
+                <a href="/explore" class="btn btn-light btn-lg">
                     <i class="fas fa-binoculars me-2"></i>Explore Projects
                 </a>
             </div>
@@ -131,9 +277,9 @@
             <div class="row g-4">
                 <!-- Feature 1 -->
                 <div class="col-md-4">
-                    <div class="card feature-card h-100 shadow-3">
+                    <div class="card feature-card h-100">
                         <div class="card-body text-center p-4">
-                            <div class="icon-lg text-primary mb-4">
+                            <div class="icon-lg mb-4">
                                 <i class="fas fa-project-diagram"></i>
                             </div>
                             <h4 class="mb-3">Project Creation</h4>
@@ -143,9 +289,9 @@
                 </div>
                 <!-- Feature 2 -->
                 <div class="col-md-4">
-                    <div class="card feature-card h-100 shadow-3">
+                    <div class="card feature-card h-100">
                         <div class="card-body text-center p-4">
-                            <div class="icon-lg text-success mb-4">
+                            <div class="icon-lg mb-4">
                                 <i class="fas fa-users-cog"></i>
                             </div>
                             <h4 class="mb-3">Student Assignment</h4>
@@ -155,9 +301,9 @@
                 </div>
                 <!-- Feature 3 -->
                 <div class="col-md-4">
-                    <div class="card feature-card h-100 shadow-3">
+                    <div class="card feature-card h-100">
                         <div class="card-body text-center p-4">
-                            <div class="icon-lg text-info mb-4">
+                            <div class="icon-lg mb-4">
                                 <i class="fas fa-tasks"></i>
                             </div>
                             <h4 class="mb-3">Progress Tracking</h4>
@@ -175,8 +321,8 @@
             <h2 class="text-center mb-5">What Users Say</h2>
             <div class="row g-4">
                 <div class="col-md-6">
-                    <div class="card h-100 shadow-2">
-                        <div class="card-body testimonial-card">
+                    <div class="card h-100 testimonial-card">
+                        <div class="card-body">
                             <blockquote class="blockquote mb-0">
                                 <p class="text-muted">"This system revolutionized how we manage lab projects. The assignment and tracking features are invaluable."</p>
                                 <footer class="blockquote-footer mt-3">
@@ -187,8 +333,8 @@
                     </div>
                 </div>
                 <div class="col-md-6">
-                    <div class="card h-100 shadow-2">
-                        <div class="card-body testimonial-card">
+                    <div class="card h-100 testimonial-card">
+                        <div class="card-body">
                             <blockquote class="blockquote mb-0">
                                 <p class="text-muted">"Finally a system that understands academic lab workflows. Makes collaboration seamless!"</p>
                                 <footer class="blockquote-footer mt-3">

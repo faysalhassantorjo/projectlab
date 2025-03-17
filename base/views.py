@@ -9,7 +9,6 @@ from django.contrib.auth.decorators import login_required
 # @login_required(login_url='/login/')
 
 def landing_page(request):
- 
     return render(request, 'base/landing_page.html')
 
 def explore(request):
@@ -62,25 +61,35 @@ def create_project(request):
     if request.method == 'POST':
         try:
 
-            # Create project with all fields
+            advisor = Teacher.objects.get(id=request.POST['advisor'])
+
+        # Create the dataset first
+            dataset = Dataset.objects.create(
+                title=request.POST['title'] + " - dataset",
+                dataset_link=request.POST.get('dataset_link', ''),
+                file=request.FILES.get('dataset_file', ''),
+                uploaded_by=advisor.user,
+                is_private = request.POST.get('is_private','')
+            )
+
+            # Create the project
             project = Project.objects.create(
                 title=request.POST['title'],
                 description=request.POST['description'],
                 objectives=request.POST.get('objectives', ''),
                 hypothesis=request.POST.get('hypothesis', ''),
                 publication_link=request.POST.get('publication_link', ''),
-                dataset_link=request.POST.get('dataset_link', ''),
                 github_link=request.POST.get('github_link', ''),
                 methodology=request.POST.get('methodology', ''),
                 tools_used=request.POST.get('tools_used', ''),
                 created_at=request.POST['start_date'],
-                advisor=Teacher.objects.get(id=request.POST['advisor']),
-                project_picture=request.FILES.get('project_picture',''),
-                project_file=request.FILES.get('project_file',''),
+                advisor=advisor,
+                project_picture=request.FILES.get('project_picture', ''),
+                project_file=request.FILES.get('project_file', ''),
+                dataset_link=dataset,  # Associate the dataset with the project
             )
-
-            # Add team members
-            print('assigned_student',request.POST.getlist('students'))
+            
+            
             for student_id in request.POST.getlist('students'):
                 student = Student.objects.get(id=student_id)
                 role = request.POST.get(f'roles_{student_id}')
@@ -142,7 +151,6 @@ def view_student_profile(request, pk):
     student = Student.objects.get(user__id = pk)
     context={'student': student, 'skills':student.skills.split(',')}
        
-   
     return render(request, 'base/profile.html', context)
 
 def teacher(request,pk):
@@ -251,3 +259,118 @@ def update_student_profile(request):
 
 def team(request):
     return render(request, 'base/team.html')
+def all_member(request):
+    students = Student.objects.all()
+    context ={
+        'students':students
+    }
+    return render(request, 'base/members.html',context)
+
+
+def dataset(request):
+    datasets = Dataset.objects.all()
+    context={
+        'datasets':datasets
+    }
+    return render(request, 'base/dataset.html',context)
+
+def download_dataset(request, dataset_id):
+    if request.method == 'POST':
+        dataset = get_object_or_404(Dataset, id=dataset_id)
+        
+        # Save download history
+        DatasetDownloadHistory.objects.create(
+            username=request.POST['username'],
+            gmail=request.POST['gmail'],
+            university=request.POST.get('university', ''),
+            dataset=dataset,
+            downloaded_at=timezone.now()
+        )
+        dataset.downloaded_number +=1 
+        dataset.save()
+        # Redirect to the dataset file download
+        return redirect(dataset.file.url)
+    
+    return redirect('project_detail', pk=dataset.project.id)
+from django.core.paginator import Paginator
+import pandas as pd
+def dataset_download_history(request, dataset_id):
+    # Get the dataset
+    dataset = get_object_or_404(Dataset, id=dataset_id)
+    
+    # Get the download history for this dataset
+    download_history = DatasetDownloadHistory.objects.filter(dataset=dataset).order_by('-downloaded_at')
+    
+    # Get projects that use this dataset
+    projects = Project.objects.filter(dataset_link=dataset)
+    
+    csv_data = []
+    headers = []
+
+    if dataset.file:
+        try:
+            # Read the CSV file using pandas
+            df = pd.read_csv(dataset.file.path)
+            headers = df.columns.tolist()
+
+            # Paginate the data
+            paginator = Paginator(df.values.tolist(), 100)  # 20 rows per page
+            page = request.GET.get('page', 1)
+            csv_data = paginator.get_page(page)
+        except Exception as e:
+            print(f"Error reading CSV file: {e}")
+    
+    context = {
+        'dataset': dataset,
+        'download_history': download_history,
+        'projects': projects,
+         'csv_data': csv_data,
+        'headers': headers,
+    }
+    return render(request, 'base/dataset_download_history.html', context)
+
+from datetime import timedelta
+
+def latest_news(request):
+    two_days_ago = timezone.now() - timedelta(days=2)
+    
+    # Fetch news articles created in the last 2 days, ordered by creation date (newest first)
+    news_articles = News.objects.filter(
+        is_published=True,
+        created_at__gte=two_days_ago  # Filter articles created after `two_days_ago`
+    ).order_by('-created_at')
+    
+    context = {
+        'news_articles': news_articles,
+    }
+    return render(request, 'base/news_threads.html', context)
+
+from .form import NewsForm
+
+def create_news(request):
+    if request.method == 'POST':
+        form = NewsForm(request.POST, request.FILES)
+        if form.is_valid():
+            news = form.save(commit=False)
+            news.author = request.user
+            news.save()
+            return redirect('latest_news')
+    else:
+        form = NewsForm()
+    return render(request, 'base/create_news.html', {'form': form})
+
+# create_dataset
+from .form import DatasetForm
+@login_required(login_url="/login/")
+def create_dataset(request):
+    if request.method == 'POST':
+        form = DatasetForm(request.POST, request.FILES)
+        if form.is_valid():
+            dataset = form.save(commit=False)
+            dataset.uploaded_by = request.user  # Assuming the user is a Teacher
+            dataset.save()
+            return redirect('dataset')  # Redirect to a success page
+    else:
+        form = DatasetForm()
+    
+    return render(request, 'base/create_dataset.html', {'form': form})

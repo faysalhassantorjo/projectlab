@@ -2,8 +2,10 @@ from django.urls import path,include
 from . import views
 urlpatterns = [
     path('dashboard/',views.dashboard, name="home"),
+    path('datasets/',views.dataset, name="dataset"),
+    path('create-dataset/',views.create_dataset, name="create_dataset"),
     path('',views.landing_page, name="landing_page"),
-    path('explore',views.explore, name="explore"),
+    path('explore/',views.explore, name="explore"),
     path('create-project/', views.create_project, name="create_project"),
     path('details-project/<int:pk>', views.project_detail, name="project_detail"),
     path('update-project/<int:pk>', views.update_project, name='update_project'),
@@ -16,4 +18,9 @@ urlpatterns = [
     path('approve/<int:student_id>/', views.approve_student, name='approve_student'),
     path('profile-update/', views.update_student_profile, name='update_student_profile'),
     path('team/', views.team, name='team'),
+    path('all-member/', views.all_member, name='all_member'),
+    path('download-dataset/<int:dataset_id>/', views.download_dataset, name='download_dataset'),
+    path('dataset-details/<int:dataset_id>/', views.dataset_download_history, name='dataset_download_history'),
+    path('latest-news/', views.latest_news, name='latest_news'),
+    path('create-news/', views.create_news, name='create_news'),
 ]

@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student List</title>
+  <!-- Font Awesome -->
+  <link
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    rel="stylesheet"
+  />
+  <!-- Google Fonts -->
+  <link
+    href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap"
+    rel="stylesheet"
+  />
+  <!-- MDB -->
+  <link
+    href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.0/mdb.min.css"
+    rel="stylesheet"
+  />
+  <style>
+    /* Custom Styles */
+    .card {
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      border: none;
+      border-radius: 15px;
+      overflow: hidden;
+      background: linear-gradient(145deg, #ffffff, #f8f9fa);
+    }
+    .card:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+    }
+    .profile-picture {
+      width: 200px;
+      height: 200px;
+      object-fit:cover;
+      object-position: center;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      transition: transform 0.3s ease;
+    }
+    .card:hover .profile-picture {
+      transform: scale(1.1);
+    }
+    .student-name {
+      font-size: 1.3em;
+      font-weight: bold;
+      color: #2c3e50;
+    }
+    .student-email {
+      font-size: 0.9em;
+      color: #6c757d;
+    }
+    .student-skills {
+      margin-top: 10px;
+    }
+    .badge {
+      font-size: 0.9em;
+      margin: 2px;
+      background-color: #3498db;
+      color: white;
+      border-radius: 12px;
+      padding: 5px 10px;
+    }
+    .student-projects, .student-datasets, .student-join-date {
+      font-size: 0.9em;
+      color: #6c757d;
+      margin: 5px 0;
+    }
+    .student-projects i, .student-datasets i, .student-join-date i {
+      margin-right: 5px;
+      color: #3498db;
+    }
+    .card-footer {
+      background: rgba(52, 152, 219, 0.1);
+      border-top: 1px solid rgba(52, 152, 219, 0.2);
+      padding: 10px;
+    }
+    .card-footer a {
+      color: #3498db;
+      text-decoration: none;
+      font-weight: bold;
+    }
+    .card-footer a:hover {
+      color: #2980b9;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .fade-in {
+      animation: fadeIn 0.6s ease-out;
+    }
+  </style>
+</head>
+<body>
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="#">Student Hub</a>
+      <button
+        class="navbar-toggler"
+        type="button"
+        data-mdb-toggle="collapse"
+        data-mdb-target="#navbarNav"
+        aria-controls="navbarNav"
+        aria-expanded="false"
+        aria-label="Toggle navigation"
+      >
+        <i class="fas fa-bars"></i>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="#">Home</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">About</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">Contact</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <div class="container my-5">
+    <h2 class="text-center mb-4">Student List</h2>
+    <div class="row">
+      {% for student in students %}
+      <div class="col-md-6 col-lg-3 mb-3 fade-in">
+        <a href="{% url 'view_profile' student.user.id %}" class="text-decoration-none text-dark">
+          <div class="card h-100 shadow-sm">
+            <div class="card-body text-center">
+              <!-- Profile Picture -->
+              <img src="{{ student.imageURL }}" alt="{{ student.user.username }}"
+                class="profile-picture mb-3" style="border-radius: 12px; ">
+              <!-- Student Name -->
+              <h5 class="card-title student-name text-uppercase" >{{ student.user.username }}</h5>
+              <!-- Email -->
+              <p class="student-email">{{ student.user.email }}</p>
+              <!-- Join Date -->
+              <p class="student-join-date">
+                <i class="fas fa-calendar-alt"></i>Joined {{ student.created_at|date:"M Y" }}
+              </p>
+              <!-- Number of Projects Assigned -->
+              <p class="student-projects">
+                <i class="fas fa-project-diagram"></i>
+                Projects: {{ student.assigned_students.count }}
+              </p>
+              <!-- Number of Datasets Created/Contributed -->
+              <p class="student-datasets">
+                <i class="fas fa-database"></i>
+                Datasets: {{ student.user.uploaded_dataset.count }}
+              </p>
+            </div>
+            <!-- Footer with View Profile Link -->
+            <div class="card-footer text-center">
+              <a href="{% url 'view_profile' student.user.id %}">View Profile <i class="fas fa-arrow-right"></i></a>
+            </div>
+          </div>
+        </a>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="bg-light text-center text-lg-start">
+    <div class="text-center p-3" style="background-color: rgba(0, 0, 0, 0.1);">
+      © 2023 Student Hub. All rights reserved.
+    </div>
+  </footer>
+
+  <!-- MDB JS -->
+  <script
+    type="text/javascript"
+    src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.0/mdb.min.js"
+  ></script>
+</body>
+</html>

@@ -1,8 +1,10 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.utils import timezone
 
 # Create your models here.
-    
+
+
 class Student(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="student_profile")
     about = models.TextField(null=True)
@@ -11,6 +13,11 @@ class Student(models.Model):
     is_approved = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True, null=True)
     skills = models.CharField(max_length=255, blank=True, help_text="Comma-separated list of skills")
+    
+    cv = models.FileField(upload_to='students-cv', null=True, blank=True)
+    google_scholar_profile = models.URLField(blank=True, null=True)
+    linkin_profile = models.URLField(blank=True, null=True)
+    github_profile = models.URLField(blank=True, null=True)
 
     
     def imageURL(self):
@@ -42,8 +49,26 @@ class Category(models.Model):
     title = models.CharField(max_length=50)
     def __str__(self):
         return self.title
-    
 
+
+
+class Dataset(models.Model):
+    title = models.TextField(max_length=200)
+    dataset_link  = models.URLField(blank=True)
+    file = models.FileField(upload_to='dataset-file')
+    is_private = models.BooleanField(default=False)
+    uploaded_by = models.ForeignKey(User, on_delete=models.CASCADE,related_name="uploaded_dataset")
+    uploaded_at = models.DateTimeField(auto_now_add=True)
+    downloaded_number = models.PositiveIntegerField(default=0)
+    
+class DatasetDownloadHistory(models.Model):
+    username = models.TextField(max_length=100)
+    gmail = models.EmailField(max_length=100)
+    university = models.TextField(max_length=20, blank=True)
+    dataset = models.ForeignKey(Dataset, on_delete=models.CASCADE, related_name="dataset_download",blank=True, null=True)
+    downloaded_at = models.DateTimeField(default=timezone.now)
+    
+    
 class project_studnet(models.Model):
     LEADER = 'leader'
     DEVELOPER = 'developer'
@@ -69,7 +94,7 @@ class Project(models.Model):
     objectives = models.TextField(blank=True)
     hypothesis = models.TextField(blank=True)
     publication_link = models.URLField(blank=True)
-    dataset_link = models.URLField(blank=True)
+    dataset_link = models.ForeignKey(Dataset, on_delete=models.CASCADE)
     github_link = models.URLField(blank=True)
     methodology = models.CharField(max_length=200, blank=True)
     tools_used = models.CharField(max_length=50, blank=True)
@@ -86,5 +111,24 @@ class Project(models.Model):
         return url
     def __str__(self):
         return self.title
+    
+    
+    
+class News(models.Model):
+    title = models.CharField(max_length=200)
+    content = models.TextField()
+    author = models.ForeignKey(Teacher, on_delete=models.CASCADE, related_name="news_articles")
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    image = models.ImageField(upload_to="news-images/", blank=True, null=True)
+    is_published = models.BooleanField(default=True)
+
+    def __str__(self):
+        return self.title
+
+    def imageURL(self):
+        if self.image:
+            return self.image.url
+        return ""
     
     

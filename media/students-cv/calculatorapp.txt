@@ -1,0 +1,106 @@
+import 'package:flutter/material.dart';
+import 'package:expressions/expressions.dart';
+
+void main() {
+  runApp(CalculatorApp());
+}
+
+class CalculatorApp extends StatefulWidget {
+  @override
+  _CalculatorAppState createState() => _CalculatorAppState();
+}
+
+class _CalculatorAppState extends State<CalculatorApp> {
+  String input = "";
+
+  void calculate(String value) {
+    var expression = Expression.parse(value);
+    var evaluator = ExpressionEvaluator();
+
+    try {
+      var result = evaluator.eval(expression, {});
+      setState(() {
+        // Extract the result as a string
+        input = result.toString();
+      });
+    } catch (e) {
+      setState(() {
+        input = "Error";
+      });
+    }
+  }
+
+  void onButtonPressed(String value) {
+    if (value == "=") {
+      calculate(input);
+    } else if (value == "C") {
+      setState(() {
+        input = ""; // Clear input
+      });
+    } else {
+      setState(() {
+        input += value;
+      });
+    }
+    print("Pressed: $value");
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: Text("Calculator")),
+        body: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              padding: EdgeInsets.all(20),
+              alignment: Alignment.centerRight,
+              child: Text(
+                input,
+                style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
+              ),
+            ),
+            GridView.builder(
+              shrinkWrap: true,
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 4,
+                crossAxisSpacing: 8,
+                mainAxisSpacing: 8,
+              ),
+              itemCount: buttons.length,
+              itemBuilder: (context, index) {
+                return ElevatedButton(
+                  onPressed: () => onButtonPressed(buttons[index]),
+                  child: Text(
+                    buttons[index],
+                    style: TextStyle(fontSize: 24),
+                  ),
+                );
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+List<String> buttons = [
+  "7",
+  "8",
+  "9",
+  "/",
+  "4",
+  "5",
+  "6",
+  "*",
+  "1",
+  "2",
+  "3",
+  "-",
+  "C",
+  "0",
+  "=",
+  "+"
+];
