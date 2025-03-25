@@ -4,176 +4,152 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
+  <title>LabProject</title>
   <!-- Font Awesome -->
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
   <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" rel="stylesheet" />
   <!-- MDB -->
   <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/8.1.0/mdb.min.css" rel="stylesheet" />
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.2/mdb.min.js"></script>
-
 </head>
 
-
-
-<style>
-  body {
-    background-color: #f1f1f1;
-  }
-
-  p {
-    color: #1b1b1b;
-  }
-
-  .time {
-    color: rgba(255, 255, 255, 0.644);
-  }
-
-
-
-
-
-
-  .blur {
-    backdrop-filter: blur(10px);
-    background-color: #1b1b1b93;
-  }
-</style>
-
 <body>
-  <header>
-
-
-    <!-- Navbar -->
-    <nav id="main-navbar" class="navbar navbar-expand-lg navbar-light bg-white fixed-top">
-      <!-- Container wrapper -->
-      <div class="container-fluid">
-        <!-- Toggle button -->
-        <button data-mdb-button-init class="navbar-toggler" type="button" data-mdb-collapse-init
-          data-mdb-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="false"
-          aria-label="Toggle navigation">
-          <i class="fas fa-bars"></i>
-        </button>
-
-        <!-- Brand -->
-        <a class="navbar-brand" href="/">
-          LAB Project
-        </a>
-        <!-- Search form -->
-        <!-- <form class="d-none d-md-flex input-group w-auto my-auto">
-              <input autocomplete="off" type="search" class="form-control rounded"
-                placeholder='Search (ctrl + "/" to focus)' style="min-width: 225px;" />
-              <span class="input-group-text border-0"><i class="fas fa-search"></i></span>
-            </form> -->
-
-        <!-- Right links -->
-        <ul class="navbar-nav ms-auto d-flex flex-row">
-          <!-- Notification dropdown -->
-
-
-          <li class="nav-item me-3 me-lg-0 " style="display: flex; align-items: center;">
-            <!-- {% if user.is_authenticated %}
-              <span>Hello {{ student }}</span>              
-            {% endif %} -->
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-light bg-white sticky-top">
+    <div class="container">
+      <a class="navbar-brand" href="#">
+        <i class="fas fa-flask me-2"></i>LabProject
+      </a>
+      <button class="navbar-toggler" type="button" data-mdb-toggle="collapse" data-mdb-target="#navbarNav"
+        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <i class="fas fa-bars"></i>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="/team">About Us</a>
           </li>
-
-          <li class="nav-item me-3 me-lg-0">
-            <a class="nav-link" href="#">
-              <i class="fab fa-github"></i>
-            </a>
+          <li class="nav-item">
+            <a class="nav-link" href="/all-member">Members</a>
           </li>
-          <!-- Icon -->
-          {% if request.user.is_authenticated %}
-          <li class="nav-item me-3 me-lg-0">
-            <a class="btn btn-primary" href="/dashboard">
-              Dashboard
-            </a>
+          <li class="nav-item">
+            <a class="nav-link" href="/explore">Projects</a>
           </li>
-          {% else %}
-          <li class="nav-item me-3 me-lg-0">
-            <a class="btn btn-primary" href="/login">
-              login
-            </a>
+          <li class="nav-item">
+            <a class="nav-link" href="/datasets">Datasets</a>
           </li>
-          {% endif %}
-   
-
-
+          <li class="nav-item">
+            <a class="nav-link" href="#publications">Publications</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'latest_news' %}">Latest News</a>
+          </li>
         </ul>
+        {% if user.is_authenticated %}
+        <ul class="navbar-nav ms-3">
+          <li class="nav-item">
+            <a class="btn btn-outline-primary" href="/dashboard">Dashboard</a>
+          </li>
+        </ul>
+        {% else %}
+        <ul class="navbar-nav ms-3">
+          <li class="nav-item">
+            <a class="btn btn-outline-primary me-2" href="{% url 'teacher_login' %}">Teacher Access</a>
+          </li>
+          <li class="nav-item">
+            <a class="btn btn-primary me-2" href="{% url 'student_login' %}">Student Access</a>
+          </li>
+        </ul>
+        {% endif %}
       </div>
-      <!-- Container wrapper -->
-    </nav>
-    <!-- Navbar -->
-  </header>
+    </div>
+  </nav>
 
-  <main style="margin-top: 100px;">
-    <div class="container  mt-4">
-      <div class="row">
+  <!-- Search and Filters -->
+  <div class="container mt-4">
+    <div class="card mb-4">
+      <div class="card-body">
+        <div class="input-group">
+          <input type="text" id="searchInput" class="form-control" placeholder="Search projects...">
+          <button class="btn btn-primary" type="button" onclick="filterProjects()">Search</button>
+        </div>
+        <div class="mt-3">
+          <button class="btn btn-outline-secondary btn-sm me-2" onclick="filterByStatus('all')">All</button>
+          <button class="btn btn-outline-secondary btn-sm me-2" onclick="filterByStatus('ongoing')">Ongoing</button>
+          <button class="btn btn-outline-secondary btn-sm me-2" onclick="filterByStatus('completed')">Completed</button>
+          <button class="btn btn-outline-secondary btn-sm" onclick="filterByStatus('planned')">Planned</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Project List -->
+  <main>
+    <div class="container">
+      <div class="list-group" id="projectList">
         {% for project in projects %}
-        <div class="col-lg-6 mb-4">
-  
-          <div class="card position-relative hover-overlay ripple shadow-2-strong rounded-5 bg-dark"
-            style="height: 400px; overflow: hidden;">
-            <!-- Card Image -->
-            <img src="{{project.imageURL}}" class="card-img-top h-100 object-fit-cover" style="opacity: .7;" alt="Project Cover">
-  
-            <!-- Overlay Content -->
-            <div class="card-img-overlay d-flex flex-column justify-content-between">
-  
-              <!-- Top Section - Creator Info & Actions -->
-              <div class="d-flex justify-content-between align-items-start">
-                <!-- Creator Info -->
-                <a href="{% url 'teacher_profile' pk=project.advisor.id %}">
-                  <div class="d-flex align-items-center p-2 rounded-3 blur" >
-                    <img src="{{project.advisor.imageURL}}" class="rounded-circle me-2" width="32" height="32"
-                      alt="Creator">
-                    <div>
-                      <p class="mb-0 small fw-bold text-capitalize text-light">{{project.advisor.user}}</p>
-                      <p class="mb-0 time small">2 hours ago</p>
-                    </div>
-                  </div>
-                </a>
-                <!-- Action Buttons -->
-
-              </div>
-  
-              <!-- Bottom Section - Card Content -->
-              <a href="{% url 'project_detail' pk=project.id %}">
-                <div class="p-3 rounded-4 blur">
-                  <h5 class="card-title text-white mb-2">{{project.title}}</h5>
-                  <p class="card-text text-white-80 small mb-3 text-secondary">
-                    {{project.description|truncatechars:100}}
-                  </p>
-  
-                  <div class="d-flex align-items-center">
-                    <h6 class="text-white mb-0 me-2 small">Team</h6>
-                    <div class="d-flex">
-  
-                      {% for assigned_stu in project.students.all %}
-  
-                      <img src="{{assigned_stu.imageURL}}" class="rounded-circle me-2" width="30" height="30"
-                        alt="{{assigned_stu.imageURL}}">
-                      {% endfor %}
-  
-                    </div>
-                  </div>
-                </div>
-              </a>
+        <a href="{% url 'project_detail' pk=project.id %}" class="list-group-item list-group-item-action">
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <h5 class="mb-1">{{ project.title }}</h5>
+              <p class="mb-1 text-muted">{{ project.description|truncatechars:100 }}</p>
+              <small class="text-muted">
+                <i class="fas fa-calendar-alt me-1"></i>
+                <strong>Start:</strong> {{ project.start_date|date:"M Y" }} |
+                <strong>End:</strong> {{ project.end_date|date:"M Y" }}
+              </small>
+            </div>
+            <div class="text-end">
+              <span class="badge 
+                {% if project.status == 'planned' %}bg-secondary
+                {% elif project.status == 'ongoing' %}bg-warning
+                {% elif project.status == 'completed' %}bg-success
+                {% elif project.status == 'cancelled' %}bg-danger{% endif %}">
+                {{ project.status|title }}
+              </span>
+              <br>
+              <small class="text-muted">
+                <i class="fas fa-users me-1"></i>{{ project.students.count }} Members
+              </small>
             </div>
           </div>
-  
-        </div>
+        </a>
         {% endfor %}
       </div>
-  
     </div>
   </main>
 
+  <!-- MDB -->
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/8.1.0/mdb.umd.min.js"></script>
+  <script>
+    // Function to filter projects by status
+    function filterByStatus(status) {
+      const projects = document.querySelectorAll('.list-group-item');
+      projects.forEach(project => {
+        const projectStatus = project.querySelector('.badge').textContent.toLowerCase();
+        if (status === 'all' || projectStatus === status) {
+          project.style.display = 'flex';
+        } else {
+          project.style.display = 'none';
+        }
+      });
+    }
 
-  <!-- MDB -->
-  <!-- MDB -->
-  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/8.2.0/mdb.umd.min.js"></script>
+    // Function to filter projects by search input
+    function filterProjects() {
+      const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+      const projects = document.querySelectorAll('.list-group-item');
+      projects.forEach(project => {
+        const title = project.querySelector('h5').textContent.toLowerCase();
+        const description = project.querySelector('p').textContent.toLowerCase();
+        if (title.includes(searchTerm) || description.includes(searchTerm)) {
+          project.style.display = 'flex';
+        } else {
+          project.style.display = 'none';
+        }
+      });
+    }
+  </script>
 </body>
 
 </html>

@@ -98,9 +98,20 @@ class Project(models.Model):
     github_link = models.URLField(blank=True)
     methodology = models.CharField(max_length=200, blank=True)
     tools_used = models.CharField(max_length=50, blank=True)
-    created_at = models.DateField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
     
     project_file = models.FileField(upload_to='project-file/', null=True, blank=True)
+    
+    
+    STATUS_CHOICES = [
+        ('planned', 'Planned'),
+        ('ongoing', 'Ongoing'),
+        ('completed', 'Completed'),
+        ('cancelled', 'Cancelled'),
+    ]
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='planned')
+    start_date = models.DateField(default=timezone.now)
+    end_date = models.DateField(null=True, blank=True)
     
     def imageURL(self):
         url = ''

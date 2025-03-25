@@ -82,7 +82,9 @@ def create_project(request):
                 github_link=request.POST.get('github_link', ''),
                 methodology=request.POST.get('methodology', ''),
                 tools_used=request.POST.get('tools_used', ''),
-                created_at=request.POST['start_date'],
+                start_date=request.POST.get('start_date'),
+                end_date=request.POST.get('start_date',''),
+                status=request.POST.get('status', ''),
                 advisor=advisor,
                 project_picture=request.FILES.get('project_picture', ''),
                 project_file=request.FILES.get('project_file', ''),
@@ -220,6 +222,37 @@ def student_login(request):
 
     return render(request, 'base/login.html')
 
+@csrf_exempt
+def teacher_login(request):
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        print(username)
+        print(password)
+        # Authenticate user
+        user = authenticate(request, username=username, password=password)
+        if user.is_superuser:
+            login(request, user)
+            return redirect('home')
+
+        if user is not None:
+            teacher =None
+            try:
+                teacher =  Teacher.objects.get(user=user)
+            except:
+                teacher = None 
+            if teacher:
+                login(request, user)
+                return redirect('home')  # Redirect to dashboard or home page
+            else:
+                messages.error(request, 'Unauthenticated Teacher!')
+                return render(request, 'base/login.html')
+        else:
+            print('Invalid username or password!')
+            messages.error(request, 'Invalid username or password!')
+
+    return render(request, 'base/teacher_login.html')
+
 def student_logout(request):
     logout(request)
     return redirect('student_login')
@@ -260,7 +293,7 @@ def update_student_profile(request):
 def team(request):
     return render(request, 'base/team.html')
 def all_member(request):
-    students = Student.objects.all()
+    students = Student.objects.filter(is_approved=True)
     context ={
         'students':students
     }
@@ -268,7 +301,7 @@ def all_member(request):
 
 
 def dataset(request):
-    datasets = Dataset.objects.all()
+    datasets = Dataset.objects.all().order_by('-id')
     context={
         'datasets':datasets
     }
@@ -302,23 +335,23 @@ def dataset_download_history(request, dataset_id):
     download_history = DatasetDownloadHistory.objects.filter(dataset=dataset).order_by('-downloaded_at')
     
     # Get projects that use this dataset
-    projects = Project.objects.filter(dataset_link=dataset)
+    # projects = Project.objects.filter(dataset_link=dataset)
+    projects = dataset.project_set.all()
+    
+    print('project dataset: ', projects)
     
     csv_data = []
     headers = []
 
     if dataset.file:
         try:
-            # Read the CSV file using pandas
-            df = pd.read_csv(dataset.file.path)
+            # Read only the first 100 rows from the CSV file using pandas
+            df = pd.read_csv(dataset.file.path, nrows=100)
             headers = df.columns.tolist()
-
-            # Paginate the data
-            paginator = Paginator(df.values.tolist(), 100)  # 20 rows per page
-            page = request.GET.get('page', 1)
-            csv_data = paginator.get_page(page)
+            csv_data = df.values.tolist()
         except Exception as e:
             print(f"Error reading CSV file: {e}")
+
     
     context = {
         'dataset': dataset,
@@ -337,7 +370,7 @@ def latest_news(request):
     # Fetch news articles created in the last 2 days, ordered by creation date (newest first)
     news_articles = News.objects.filter(
         is_published=True,
-        created_at__gte=two_days_ago  # Filter articles created after `two_days_ago`
+        # created_at__gte=two_days_ago  # Filter articles created after `two_days_ago`
     ).order_by('-created_at')
     
     context = {

@@ -62,17 +62,31 @@
                                 <div class="card-body">
                                     <h5 class="mb-3"><i class="fas fa-tools me-2"></i>Technical Details</h5>
 
-                                    <div class="mb-3">
-                                        <label class="form-label">Start Date</label>
-                                        <input type="date" name="start_date" class="form-control" required>
+                                    <!-- Status -->
+                                    <div class="form-group mb-3">
+                                        <label for="status" class="form-label">Status <span
+                                                class="text-danger">*</span></label>
+                                        <select class="form-select" name="status" id="status" required>
+                                            <option value="planned">Planned</option>
+                                            <option value="ongoing">Ongoing</option>
+                                            <option value="completed">Completed</option>
+                                            <option value="cancelled">Cancelled</option>
+                                        </select>
                                     </div>
 
-                                    <!-- <div class="mb-3">
-                                        <label class="form-label">End Date</label>
-                                        <input type="date" name="end_date" 
-                                               class="form-control" required>
-                                    </div> -->
+                                    <!-- Start Date -->
+                                    <div class="form-group mb-3">
+                                        <label for="start_date" class="form-label">Start Date <span
+                                                class="text-danger">*</span></label>
+                                        <input type="date" name="start_date" id="start_date" class="form-control"
+                                            required>
+                                    </div>
 
+                                    <!-- End Date -->
+                                    <div class="form-group mb-3">
+                                        <label for="end_date" class="form-label">End Date</label>
+                                        <input type="date" name="end_date" id="end_date" class="form-control">
+                                    </div>
                                     <div class="mb-3">
                                         <label class="form-label">Methodology</label>
                                         <input type="text" name="methodology" class="form-control"
@@ -100,7 +114,7 @@
                                         {% for teacher in teachers %}
                                         <label class="list-group-item d-flex align-items-center">
                                             <input class="form-check-input me-3" type="radio" name="advisor"
-                                                value="{{ teacher.id }}" required {% if forloop.first %}checked{% endif%}>
+                                                value="{{ teacher.id }}" required {% if forloop.first %}checked{%endif%}>
                                             <div class="d-flex align-items-center">
                                                 <img src="{{ teacher.imageURL }}" class="rounded-circle me-3" width="40"
                                                     height="40" alt="{{ teacher.user.username }}">
@@ -172,17 +186,19 @@
                                         <!-- Default radio -->
                                         <div class="form-check">
                                             <input class="form-check-input" type="radio" name="is_private" value="False"
-                                                id="flexRadioDefault1" checked/>
-                                            <label class="form-check-label" for="flexRadioDefault1">  <i class="fa-solid fa-earth-americas me-2"></i>Public
+                                                id="flexRadioDefault1" checked />
+                                            <label class="form-check-label" for="flexRadioDefault1"> <i
+                                                    class="fa-solid fa-earth-americas me-2"></i>Public
                                             </label>
                                         </div>
 
                                         <!-- Default checked radio -->
                                         <div class="form-check">
                                             <input class="form-check-input" type="radio" name="is_private" value="True"
-                                                id="flexRadioDefault2"  />
-                                            <label class="form-check-label" for="flexRadioDefault2">  <i class="fa-solid fa-lock me-2"></i>Private
-                                             </label>
+                                                id="flexRadioDefault2" />
+                                            <label class="form-check-label" for="flexRadioDefault2"> <i
+                                                    class="fa-solid fa-lock me-2"></i>Private
+                                            </label>
                                         </div>
 
                                     </div>
@@ -232,7 +248,8 @@
                                                 height="45" alt="{{ student.user.username }}">
                                             <div class="flex-grow-1">
                                                 <h6 class="mb-0 student-name">{{ student.user.username }}</h6>
-                                                <small class="text-muted">{{ student.user.email|truncatechars:15}}</small>
+                                                <small class="text-muted">{{
+                                                    student.user.email|truncatechars:15}}</small>
                                             </div>
                                             <select class="form-select form-select-sm w-25"
                                                 name="roles_{{ student.id }}">

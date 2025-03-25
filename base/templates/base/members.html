@@ -96,39 +96,59 @@
 </head>
 <body>
   <!-- Navbar -->
-  <nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <div class="container-fluid">
-      <a class="navbar-brand" href="#">Student Hub</a>
-      <button
-        class="navbar-toggler"
-        type="button"
-        data-mdb-toggle="collapse"
-        data-mdb-target="#navbarNav"
-        aria-controls="navbarNav"
-        aria-expanded="false"
-        aria-label="Toggle navigation"
-      >
-        <i class="fas fa-bars"></i>
-      </button>
-      <div class="collapse navbar-collapse" id="navbarNav">
-        <ul class="navbar-nav ms-auto">
-          <li class="nav-item">
-            <a class="nav-link" href="#">Home</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#">About</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#">Contact</a>
-          </li>
-        </ul>
-      </div>
+  <nav class="navbar navbar-expand-lg  bg-light stiky-top">
+    <div class="container">
+        <a class="navbar-brand" href="#">
+            <i class="fas fa-flask me-2"></i>LabProject
+        </a>
+        <button class="navbar-toggler" type="button" data-mdb-toggle="collapse" data-mdb-target="#navbarNav"
+            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="fas fa-bars"></i>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="/team">About Us</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/all-member">Members</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/explore">Projects</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/datasets">Datasets</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#publications">Publications</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'latest_news' %}">Latest News</a>
+                </li>
+                <!-- <li class="nav-item">
+                    <a class="nav-link" href="#contact">Contact</a>
+                </li> -->
+            </ul>
+            {% if user.is_authenticated %}
+            <ul class="navbar-nav ms-3">
+                <li class="nav-item">
+                    <a class="btn btn-outline-primary" href="/dashboard">Dashboard</a>
+                </li>
+            </ul>
+            {% else %}
+            <ul class="navbar-nav ms-3">
+       
+                <li class="nav-item">
+                    <a class="btn btn-outline-primary me-2" href="{% url 'teacher_login' %}">Teacher Access</a>
+                </li>
+            </ul>
+            {% endif %}
+        </div>
     </div>
-  </nav>
-
+</nav>
   <!-- Main Content -->
   <div class="container my-5">
-    <h2 class="text-center mb-4">Student List</h2>
+    <h2 class="text-center mb-4">Member List</h2>
     <div class="row">
       {% for student in students %}
       <div class="col-md-6 col-lg-3 mb-3 fade-in">
@@ -137,7 +157,7 @@
             <div class="card-body text-center">
               <!-- Profile Picture -->
               <img src="{{ student.imageURL }}" alt="{{ student.user.username }}"
-                class="profile-picture mb-3" style="border-radius: 12px; ">
+                class="profile-picture mb-3" style="border-radius: 12px; width: 100%;">
               <!-- Student Name -->
               <h5 class="card-title student-name text-uppercase" >{{ student.user.username }}</h5>
               <!-- Email -->

@@ -103,6 +103,56 @@
 </head>
 
 <body>
+    <nav class="navbar navbar-expand-lg  bg-light fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="/">
+                <i class="fas fa-flask me-2"></i>LabProject
+            </a>
+            <button class="navbar-toggler" type="button" data-mdb-toggle="collapse" data-mdb-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <i class="fas fa-bars"></i>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/team">About Us</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/all-member">Members</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/explore">Projects</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/datasets">Datasets</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#publications">Publications</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'latest_news' %}">Latest News</a>
+                    </li>
+                    <!-- <li class="nav-item">
+                        <a class="nav-link" href="#contact">Contact</a>
+                    </li> -->
+                </ul>
+                {% if user.is_authenticated %}
+                <ul class="navbar-nav ms-3">
+                    <li class="nav-item">
+                        <a class="btn btn-outline-primary" href="/dashboard">Dashboard</a>
+                    </li>
+                </ul>
+                {% else %}
+                <ul class="navbar-nav ms-3">
+           
+                    <li class="nav-item">
+                        <a class="btn btn-outline-primary me-2" href="{% url 'teacher_login' %}">Teacher Access</a>
+                    </li>
+                </ul>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-md-6 col-lg-5">

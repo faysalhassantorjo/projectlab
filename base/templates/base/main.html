@@ -136,34 +136,74 @@
     <!-- Navbar -->
     <!-- Sidebar -->
      {% if user.is_authenticated %}
-    <nav id="sidebarMenu" class="collapse d-lg-block sidebar collapse bg-white">
-      <div class="position-sticky">
-        <div class="list-group list-group-flush mx-3 mt-4">
-          <a href="/dashboard" class="list-group-item list-group-item-action py-2 ripple " aria-current="true">
-            <i class="fas fa-tachometer-alt fa-fw me-3"></i><span>Main dashboard</span>
-          </a>
-          {% if tacher or request.user.is_superuser %}
-          <a href="{% url 'create_project' %}" class="list-group-item list-group-item-action py-2 ripple ">
-            <i class="fas fa-chart-area fa-fw me-3"></i><span>Create Project</span>
-          </a>
-          {% endif %}
-          {% if user.is_superuser %}
-          <a href="{% url 'pending_approvals' %}" class="list-group-item list-group-item-action py-2 ripple"><i
-              class="fas fa-lock fa-fw me-3"></i><span>Pending ({{pending_students|length}}) </span></a>
-          {% endif %}
-          <a href="/datasets" class="list-group-item list-group-item-action py-2 ripple"><i
-              class="fas fa-chart-line fa-fw me-3"></i><span>Datasets</span></a>
-          <a href="/all-member" class="list-group-item list-group-item-action py-2 ripple"><i
-              class="fa-solid fa-people-line fa-fw me-3"></i><span>All Member</span></a>
-          <a href="{% url 'team' %}" class="list-group-item list-group-item-action py-2 ripple">
-            <i class=" fa-fw me-3"></i><span>Team</span>
-          </a>
-          <a href="#" class="list-group-item list-group-item-action py-2 ripple"><i
-              class="fas fa-chart-bar fa-fw me-3"></i><span>FAQ</span></a>
 
-        </div>
-      </div>
-    </nav>
+
+<!-- Sidebar -->
+<nav id="sidebarMenu" class="collapse d-lg-block sidebar collapse bg-white">
+  <div class="position-sticky">
+    <div class="list-group list-group-flush mx-3 mt-4">
+      <!-- Dashboard Link -->
+      <a href="/dashboard" class="list-group-item list-group-item-action py-2 ripple" aria-current="true">
+        <i class="fas fa-tachometer-alt fa-fw me-3"></i><span>Main Dashboard</span>
+      </a>
+
+      <!-- Create Project Link (Visible to Teachers or Superusers) -->
+      {% if teacher or request.user.is_superuser %}
+        <a href="{% url 'create_project' %}" class="list-group-item list-group-item-action py-2 ripple">
+          <i class="fas fa-chart-area fa-fw me-3"></i><span>Create Project</span>
+        </a>
+      {% endif %}
+
+      <!-- Pending Approvals Link (Visible to Superusers) -->
+      {% if user.is_superuser %}
+        <a href="{% url 'pending_approvals' %}" class="list-group-item list-group-item-action py-2 ripple">
+          <i class="fas fa-lock fa-fw me-3"></i><span>Pending ({{ pending_students|length }})</span>
+        </a>
+      {% endif %}
+
+      <!-- Datasets Link -->
+      <a href="/datasets" class="list-group-item list-group-item-action py-2 ripple">
+        <i class="fas fa-chart-line fa-fw me-3"></i><span>Datasets</span>
+      </a>
+
+
+      <!-- Team Link -->
+      <a href="{% url 'team' %}" class="list-group-item list-group-item-action py-2 ripple">
+        <i class="fas fa-users fa-fw me-3"></i><span>Team</span>
+      </a>
+
+      <!-- FAQ Link -->
+      <a href="#" class="list-group-item list-group-item-action py-2 ripple">
+        <i class="fas fa-chart-bar fa-fw me-3"></i><span>FAQ</span>
+      </a>
+
+      <!-- About Us Link -->
+      <a href="/team" class="list-group-item list-group-item-action py-2 ripple">
+        <i class="fas fa-info-circle fa-fw me-3"></i><span>About Us</span>
+      </a>
+
+      <!-- Members Link -->
+      <a href="/all-member" class="list-group-item list-group-item-action py-2 ripple">
+        <i class="fas fa-users fa-fw me-3"></i><span>Members</span>
+      </a>
+
+      <!-- Projects Link -->
+      <a href="/explore" class="list-group-item list-group-item-action py-2 ripple">
+        <i class="fas fa-project-diagram fa-fw me-3"></i><span>Projects</span>
+      </a>
+
+      <!-- Publications Link -->
+      <a href="#publications" class="list-group-item list-group-item-action py-2 ripple">
+        <i class="fas fa-book fa-fw me-3"></i><span>Publications</span>
+      </a>
+
+      <!-- Latest News Link -->
+      <a href="{% url 'latest_news' %}" class="list-group-item list-group-item-action py-2 ripple">
+        <i class="fas fa-newspaper fa-fw me-3"></i><span>Latest News</span>
+      </a>
+    </div>
+  </div>
+</nav>
     <!-- Sidebar -->
 
     <!-- Navbar -->

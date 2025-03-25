@@ -2,45 +2,69 @@
 from django import forms
 from .models import Student, Dataset
 import re
+from django import forms
+import re
+from .models import Student
 
 class StudentProfileForm(forms.ModelForm):
     class Meta:
         model = Student
-        fields = ['about','phone', 'profile_picture', 'skills']
+        fields = ['about', 'phone', 'profile_picture', 'skills', 'cv', 'google_scholar_profile', 'linkin_profile', 'github_profile']
+        
         widgets = {
-            'about':forms.Textarea(
-                attrs={
-                    'name':'body',
-                    'style':'width:90%'
-                }
-            )
-            ,
+            'about': forms.Textarea(attrs={
+                'name': 'body',
+                'style': 'width:90%',
+                'class': 'form-control'
+            }),
             'phone': forms.TextInput(attrs={
                 'class': 'form-control',
                 'pattern': '[0-9]{11}',
-                'title': '11-digit phone number'
+                'title': 'Enter a valid 11-digit phone number'
             }),
             'profile_picture': forms.FileInput(attrs={
                 'class': 'form-control',
                 'accept': 'image/*'
             }),
+            'cv': forms.FileInput(attrs={
+                'class': 'form-control',
+                'accept': 'application/pdf'
+            }),
+            'skills': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Separate skills with commas'
+            }),
+            'google_scholar_profile': forms.URLInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Enter Google Scholar URL'
+            }),
+            'linkin_profile': forms.URLInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Enter LinkedIn URL'
+            }),
+            'github_profile': forms.URLInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Enter GitHub URL'
+            }),
         }
+        
         help_texts = {
-            'phone': 'Enter 11-digit phone number',
-            'skills': 'Separate skills with commas',
+            'phone': 'Enter an 11-digit phone number',
+            'skills': 'Separate skills with commas (e.g., Python, Django, ML)',
         }
 
     def clean_phone(self):
         phone = self.cleaned_data.get('phone')
-        if phone and not re.match(r'^[0-9]{11}$', phone):
-            raise forms.ValidationError('Enter a valid 11-digit phone number')
+        if phone and not re.match(r'^\d{11}$', phone):
+            raise forms.ValidationError('Enter a valid 11-digit phone number.')
         return phone
 
     def clean_skills(self):
         skills = self.cleaned_data.get('skills')
-        if not skills:
-            raise forms.ValidationError('At least one skill is required')
+        if not skills or skills.strip() == "":
+            raise forms.ValidationError('At least one skill is required.')
         return skills
+
     
 from .models import News
 

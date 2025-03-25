@@ -1,45 +1,49 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Dataset Cards</title>
   <!-- Font Awesome -->
-  <link
-    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
-    rel="stylesheet"
-  />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
   <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link
-    href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap"
-    rel="stylesheet"
-  />
+    href="https://fonts.googleapis.com/css2?family=Protest+Guerrilla&family=Ubuntu:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&display=swap"
+    rel="stylesheet">
+
   <!-- MDB -->
-  <link
-    href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.0/mdb.min.css"
-    rel="stylesheet"
-  />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.0/mdb.min.css" rel="stylesheet" />
+
+  <style>
+    body {
+      font-family: "Ubuntu", sans-serif;
+    }
+  </style>
 </head>
+
 <body>
   <!-- Navbar -->
   <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <div class="container-fluid">
       <a class="navbar-brand" href="#">Dataset Hub</a>
-      <button
-        class="navbar-toggler"
-        type="button"
-        data-mdb-toggle="collapse"
-        data-mdb-target="#navbarNav"
-        aria-controls="navbarNav"
-        aria-expanded="false"
-        aria-label="Toggle navigation"
-      >
+      <button class="navbar-toggler" type="button" data-mdb-toggle="collapse" data-mdb-target="#navbarNav"
+        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
         <i class="fas fa-bars"></i>
       </button>
+
+
       <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav ms-auto">
 
           <!-- Contribute Button in Navbar -->
+          <li class="nav-item">
+            <a href="{% url 'home' %}" class="btn btn-light btn-sm me-2">
+              Dashboard
+            </a>
+          </li>
           <li class="nav-item">
             <a href="{% url 'create_dataset' %}" class="btn btn-primary btn-sm">
               <i class="fas fa-plus me-1"></i> Contribute
@@ -68,20 +72,46 @@
       <div class="col-md-6 col-lg-4 mb-4">
         <div class="card h-100 shadow-sm">
           <div class="card-body">
+            <!-- User Image and Name -->
+
+            <div class="d-flex align-items-center mb-3 ml-1">
+              <img {% if dataset.uploaded_by.student_profile %} src="{{ dataset.uploaded_by.student_profile.imageURL }}"
+                {% elif dataset.uploaded_by.teacher_profile %} src="{{ dataset.uploaded_by.teacher_profile.imageURL }}"
+                {% else %} src="https://img.freepik.com/free-icon/user_318-644325.jpg" {% endif %}
+                alt="{{ dataset.uploaded_by.username }}" class="rounded-3 me-2" width="40" height="50">
+              <div class="d-flex flex-column">
+                <!-- Username -->
+                <span class="fw-bold text-capitalize">{{ dataset.uploaded_by.username }}</span>
+
+                <!-- Icon -->
+                <div class="mt-0">
+                  {% if dataset.is_private %}
+                  <i class="fas fa-lock fa-1x text-danger"></i>
+                  {% else %}
+                  <i class="fas fa-database fa-1x text-success"></i>
+                  {% endif %}
+                </div>
+              </div>
+
+            </div>
+
             <!-- Dataset Icon -->
-            <div class="text-center mb-3">
+            <!-- <div class="text-center mb-3">
               {% if dataset.is_private %}
                 <i class="fas fa-lock fa-3x text-danger"></i>
               {% else %}
                 <i class="fas fa-database fa-3x text-primary"></i>
               {% endif %}
-            </div>
+            </div> -->
+
             <!-- Dataset Title -->
             <h5 class="card-title text-center">{{ dataset.title }}</h5>
+
             <!-- Short Description -->
             <p class="card-text text-muted text-center">
-              A collection of data for research and analysis. Uploaded by <strong>{{ dataset.uploaded_by }}</strong>.
+              A collection of data for research and analysis.
             </p>
+
             <!-- Metadata -->
             <ul class="list-group list-group-flush">
               <li class="list-group-item">
@@ -106,7 +136,7 @@
             <div class="card-footer bg-transparent d-flex justify-content-between">
               {% if dataset.dataset_link %}
               {% if dataset.is_private %}
-              <a  class="btn btn-secondary btn-sm" target="_blank">
+              <a class="btn btn-secondary btn-sm" target="_blank">
                 <i class="fas fa-external-link-alt me-1"></i> Visit Link
               </a>
               {% else %}
@@ -117,16 +147,17 @@
               {% endif %}
 
               {% if dataset.file %}
-                {% if dataset.is_private %}
-                  <button class="btn btn-secondary btn-sm" disabled>
-                    <i class="fas fa-lock me-1"></i> Private
-                  </button>
-                {% else %}
-                  <!-- Button to trigger download modal -->
-                  <button type="button" class="btn btn-success btn-sm" data-mdb-toggle="modal" data-mdb-target="#downloadModal{{ dataset.id }}">
-                    <i class="fas fa-download me-1"></i> Download
-                  </button>
-                {% endif %}
+              {% if dataset.is_private %}
+              <button class="btn btn-secondary btn-sm" disabled>
+                <i class="fas fa-lock me-1"></i> Private
+              </button>
+              {% else %}
+              <!-- Button to trigger download modal -->
+              <button type="button" class="btn btn-success btn-sm" data-mdb-toggle="modal"
+                data-mdb-target="#downloadModal{{ dataset.id }}">
+                <i class="fas fa-download me-1"></i> Download
+              </button>
+              {% endif %}
               {% endif %}
             </div>
           </div>
@@ -135,7 +166,8 @@
 
       <!-- Download Modal for Non-Private Datasets -->
       {% if not dataset.is_private and dataset.file %}
-      <div class="modal fade" id="downloadModal{{ dataset.id }}" tabindex="-1" aria-labelledby="downloadModalLabel{{ dataset.id }}" aria-hidden="true">
+      <div class="modal fade" id="downloadModal{{ dataset.id }}" tabindex="-1"
+        aria-labelledby="downloadModalLabel{{ dataset.id }}" aria-hidden="true">
         <div class="modal-dialog">
           <div class="modal-content">
             <div class="modal-header">
@@ -164,7 +196,8 @@
             </div>
             <div class="modal-footer">
               <button type="button" class="btn btn-secondary" data-mdb-dismiss="modal">Close</button>
-              <button type="submit" form="downloadForm{{ dataset.id }}" class="btn btn-primary"  data-mdb-dismiss="modal">Download</button>
+              <button type="submit" form="downloadForm{{ dataset.id }}" class="btn btn-primary"
+                data-mdb-dismiss="modal">Download</button>
             </div>
           </div>
         </div>
@@ -182,9 +215,7 @@
   </footer>
 
   <!-- MDB JS -->
-  <script
-    type="text/javascript"
-    src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.0/mdb.min.js"
-  ></script>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.0/mdb.min.js"></script>
 </body>
+
 </html>

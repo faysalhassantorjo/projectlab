@@ -5,14 +5,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>{{ project.title }} - Project Details</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" rel="stylesheet" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Protest+Guerrilla&family=Ubuntu:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&display=swap"
+        rel="stylesheet">
+
     <!-- MDB -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/8.1.0/mdb.min.css" rel="stylesheet" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.2/mdb.min.js"></script>
     <style>
+        body {
+            font-family: "Ubuntu", sans-serif;
+            font-weight: 300;
+            font-style: normal;
+        }
+
         .modal-content {
             border-radius: 10px;
         }
@@ -29,6 +40,26 @@
 
         .form-outline {
             margin-bottom: 1.5rem;
+        }
+
+        .bg-gradient-dark {
+            background: linear-gradient(to bottom, transparent 0%, rgba(0, 0, 0, 0.8) 100%);
+        }
+
+        .list-group-item:hover {
+            background-color: #f8f9fa;
+            transform: translateX(5px);
+            transition: all 0.3s ease;
+        }
+
+        .project-content {
+            line-height: 1.8;
+            font-size: 1rem;
+        }
+
+        .list-group-item-action:hover {
+            transform: translateX(5px);
+            transition: transform 0.3s ease;
         }
     </style>
 </head>
@@ -54,8 +85,7 @@
                             {% endif %}
                             {% if project.dataset_link %}
                             {% if project.dataset_link.is_private %}
-                            <a target="_blank"
-                                class="badge bg-success text-decoration-none">
+                            <a target="_blank" class="badge bg-success text-decoration-none">
                                 <i class="fa-solid fa-lock me-2"></i>Dataset
                             </a>
                             {% else %}
@@ -104,8 +134,6 @@
                         </div>
                     </div>
 
-
-
                     <!-- Team Members -->
                     <div class="card mb-4 shadow-2">
                         <div class="card-body">
@@ -146,7 +174,7 @@
 
                                 {% if project.dataset_link %}
                                 {% if project.dataset_link.is_private %}
-                                <a  target="_blank"
+                                <a target="_blank"
                                     class="list-group-item list-group-item-action d-flex align-items-center">
                                     <i class="fa-solid fa-lock me-2"></i>
                                     Dataset Repository
@@ -166,17 +194,23 @@
                                     Github Repository
                                 </a>
                                 {% endif %}
+                                {% if project.methodology %}
+                                <a href="{{ project.methodology }}" target="_blank"
+                                    class="list-group-item list-group-item-action d-flex align-items-center">
+                                    <i class="fas fa-toolbox me-2 text-info"></i>
+                                    Methodology
+                                </a>
+                                {% endif %}
                             </div>
 
                             <!-- Dataset Download Button and Modal -->
-                            <div class="card mb-4 shadow-2">
+                            <div class="card mb-4 shadow-2 mt-2">
                                 <div class="card-body">
 
                                     <h4 class="mb-3"><i class="fas fa-database me-2"></i>Dataset</h4>
                                     {% if project.dataset_link %}
                                     {% if project.dataset_link.is_private %}
-                                    <button type="button" class="btn btn-primary" 
-                                        >
+                                    <button type="button" class="btn btn-primary">
                                         <i class="fa-solid fa-lock me-2"></i></i>Download Dataset
                                     </button>
                                     {% else %}
@@ -262,23 +296,34 @@
                             <ul class="list-unstyled">
                                 <li class="mb-2">
                                     <i class="fas fa-calendar-alt me-2"></i>
-                                    <strong>Start Date:</strong> {{ project.created_at|date:"M Y" }}
+                                    <strong>Start Date:</strong> {{ project.start_date }}
                                 </li>
                                 <li class="mb-2">
-                                    <i class="fas fa-toolbox me-2"></i>
-                                    <strong>Methodology:</strong> {{ project.methodology }}
+                                    <i class="fas fa-calendar-alt me-2"></i>
+                                    <strong>End Date:</strong> {{ project.end_date}}
                                 </li>
+                            
                                 <li class="mb-2">
                                     <i class="fas fa-tools me-2"></i>
                                     <strong>Tools:</strong>
                                     {% for tool in tools %}
                                     <span class="badge bg-secondary me-1">{{ tool }}</span>
                                     {% endfor %}
-
                                 </li>
                                 <li class="mb-2">
                                     <i class="fas fa-users me-2"></i>
                                     <strong>Team Size:</strong> {{ project.students.count }} members
+                                </li>
+                                <li class="mb-2">
+                                    <i class="fas fa-tasks me-2"></i>
+                                    <strong>Status:</strong> 
+                                    <span class="badge 
+                                        {% if project.status == 'completed' %}bg-success
+                                        {% elif project.status == 'ongoing' %}bg-warning
+                                        {% elif project.status == 'cancelled' %}bg-danger
+                                        {% else %}bg-secondary{% endif %}">
+                                        {{ project.status|title }}
+                                    </span>
                                 </li>
                             </ul>
                         </div>
@@ -319,28 +364,6 @@
             </div>
         </div>
     </main>
-
-    <style>
-        .bg-gradient-dark {
-            background: linear-gradient(to bottom, transparent 0%, rgba(0, 0, 0, 0.8) 100%);
-        }
-
-        .list-group-item:hover {
-            background-color: #f8f9fa;
-            transform: translateX(5px);
-            transition: all 0.3s ease;
-        }
-
-        .project-content {
-            line-height: 1.8;
-            font-size: 1rem;
-        }
-
-        .list-group-item-action:hover {
-            transform: translateX(5px);
-            transition: transform 0.3s ease;
-        }
-    </style>
 
 </body>
 

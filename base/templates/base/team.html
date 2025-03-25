@@ -1,54 +1,120 @@
-{% extends 'base/main.html' %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+      <!-- Font Awesome -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" rel="stylesheet" />
+  <!-- MDB -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/8.1.0/mdb.min.css" rel="stylesheet" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.2/mdb.min.js"></script>
+  <link href="https://cdn.jsdelivr.net/npm/mdb-ui-kit/css/mdb.min.css" rel="stylesheet">
 
-{% block content %}
-<main>
-    <div class="container mt-5">
-        <div class="row text-center">
-            <!-- First Row of Professors -->
-            <div class="col-md-4">
-                <div class="border border-secondary rounded p-5 d-flex align-items-center justify-content-center" style="height: 200px;">
-                    <span class="text-muted">No Image Available</span>
-                </div>
-                <h5 class="mt-2 fw-bold">Dr. Touhid Bhuiyan</h5>
-            </div>
-            <div class="col-md-4">
-                <div class="border border-secondary rounded p-5 d-flex align-items-center justify-content-center" style="height: 200px;">
-                    <span class="text-muted">No Image Available</span>
-                </div>
-                <h5 class="mt-2 fw-bold">Dr. Shamsul Arefin</h5>
-            </div>
-            <div class="col-md-4">
-                <div class="border border-secondary rounded p-5 d-flex align-items-center justify-content-center" style="height: 200px;">
-                    <span class="text-muted">No Image Available</span>
-                </div>
-                <h5 class="mt-2 fw-bold">Dr. Sheikh Rashed Haider Noori</h5>
+
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg  bg-light stiky-top">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                <i class="fas fa-flask me-2"></i>LabProject
+            </a>
+            <button class="navbar-toggler" type="button" data-mdb-toggle="collapse" data-mdb-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <i class="fas fa-bars"></i>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/team">About Us</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/all-member">Members</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/explore">Projects</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/datasets">Datasets</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#publications">Publications</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'latest_news' %}">Latest News</a>
+                    </li>
+                    <!-- <li class="nav-item">
+                        <a class="nav-link" href="#contact">Contact</a>
+                    </li> -->
+                </ul>
+                {% if user.is_authenticated %}
+                <ul class="navbar-nav ms-3">
+                    <li class="nav-item">
+                        <a class="btn btn-outline-primary" href="/dashboard">Dashboard</a>
+                    </li>
+                </ul>
+                {% else %}
+                <ul class="navbar-nav ms-3">
+           
+                    <li class="nav-item">
+                        <a class="btn btn-outline-primary me-2" href="{% url 'teacher_login' %}">Teacher Access</a>
+                    </li>
+                </ul>
+                {% endif %}
             </div>
         </div>
-    
-        <hr class="my-5">
-    
-        <!-- Second Row - Investigator -->
-        <div class="row align-items-center">
-            <div class="col-md-4">
-                <div class="border border-secondary rounded p-5 d-flex align-items-center justify-content-center" style="height: 400px;">
-                    <span class="text-muted">No Image Available</span>
+    </nav>
+    <main class="mt-5">
+        <div class="container mt-5">
+            <div class="row text-center">
+                <!-- First Row of Professors -->
+                <div class="col-md-4">
+                    <div class="border border-secondary rounded p-5 d-flex align-items-center justify-content-center" style="height: 200px;">
+                        <span class="text-muted">No Image Available</span>
+                    </div>
+                    <h5 class="mt-2 fw-bold">Dr. Touhid Bhuiyan</h5>
+                </div>
+                <div class="col-md-4">
+                    <div class="border border-secondary rounded p-5 d-flex align-items-center justify-content-center" style="height: 200px;">
+                        <span class="text-muted">No Image Available</span>
+                    </div>
+                    <h5 class="mt-2 fw-bold">Dr. Shamsul Arefin</h5>
+                </div>
+                <div class="col-md-4">
+                    <div class="border border-secondary rounded p-5 d-flex align-items-center justify-content-center" style="height: 200px;">
+                        <span class="text-muted">No Image Available</span>
+                    </div>
+                    <h5 class="mt-2 fw-bold">Dr. Sheikh Rashed Haider Noori</h5>
                 </div>
             </div>
-            <div class="col-md-8">
-                <h4 class="fw-bold">Afjal Hossan Sarower</h4>
-                <p><strong>Principal Investigator</strong><br>
-                    Senior Lecturer<br>
-                    Department of Computer Science and Engineering<br>
-                    Daffodil International University
-                </p>
-                <p>
-                    <strong>Phone:</strong> 01869045878 <br>
-                    <strong>Email:</strong> <a href="mailto:afjal.cse@diu.edu.bd">afjal.cse@diu.edu.bd</a> <br>
-                    <strong>Office:</strong> 317/10, KT, DIU.
-                </p>
+        
+            <hr class="my-5">
+        
+            <!-- Second Row - Investigator -->
+            <div class="row align-items-center">
+                <div class="col-md-4">
+                    <div class="border border-secondary rounded p-5 d-flex align-items-center justify-content-center" style="height: 400px;">
+                        <span class="text-muted">No Image Available</span>
+                    </div>
+                </div>
+                <div class="col-md-8">
+                    <h4 class="fw-bold">Afjal Hossan Sarower</h4>
+                    <p><strong>Principal Investigator</strong><br>
+                        Senior Lecturer<br>
+                        Department of Computer Science and Engineering<br>
+                        Daffodil International University
+                    </p>
+                    <p>
+                        <strong>Phone:</strong> 01869045878 <br>
+                        <strong>Email:</strong> <a href="mailto:afjal.cse@diu.edu.bd">afjal.cse@diu.edu.bd</a> <br>
+                        <strong>Office:</strong> 317/10, KT, DIU.
+                    </p>
+                </div>
             </div>
         </div>
-    </div>
-</main>
+    </main>
+</body>
+</html>
 
-{% endblock %}
