@@ -231,7 +231,7 @@ def teacher_login(request):
         print(password)
         # Authenticate user
         user = authenticate(request, username=username, password=password)
-        if user.is_superuser:
+        if user and user.is_superuser:
             login(request, user)
             return redirect('home')
 
