@@ -1,120 +1,801 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-      <!-- Font Awesome -->
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
-  <!-- Google Fonts -->
-  <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" rel="stylesheet" />
-  <!-- MDB -->
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/8.1.0/mdb.min.css" rel="stylesheet" />
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.2/mdb.min.js"></script>
-  <link href="https://cdn.jsdelivr.net/npm/mdb-ui-kit/css/mdb.min.css" rel="stylesheet">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Research Lab - Founding Members</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+    rel="stylesheet">
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --primary: #6366f1;
+      --primary-dark: #4f46e5;
+      --accent: #ec4899;
+      --accent-secondary: #f59e0b;
+      --text-primary: #0f172a;
+      --text-secondary: #64748b;
+      --text-light: #94a3b8;
+      --bg-primary: #ffffff;
+      --bg-secondary: #f8fafc;
+      --bg-tertiary: #f1f5f9;
+      --bg-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+      --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+      --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+      --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1);
+      --shadow-2xl: 0 25px 50px -12px rgb(0 0 0 / 0.25);
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg-secondary);
+      color: var(--text-primary);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* Navigation */
+    .navbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+      padding: 0.75rem 0;
+      transition: all 0.3s ease;
+    }
+
+    .nav-container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .nav-brand {
+      font-weight: 700;
+      font-size: 1.25rem;
+      color: var(--primary);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    /* Hero Section */
+    .hero {
+      background: var(--bg-gradient);
+      padding: 8rem 0 6rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="white" opacity="0.1"/><circle cx="75" cy="75" r="1" fill="white" opacity="0.1"/><circle cx="50" cy="10" r="0.5" fill="white" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+      opacity: 0.3;
+    }
+
+    .hero-content {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0 2rem;
+      position: relative;
+      z-index: 2;
+      text-align: center;
+    }
+
+    .hero h1 {
+      font-size: 4rem;
+      font-weight: 800;
+      color: white;
+      margin-bottom: 1rem;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .hero-subtitle {
+      font-size: 1.375rem;
+      color: rgba(255, 255, 255, 0.9);
+      margin-bottom: 3rem;
+      font-weight: 500;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .hero-stats {
+      display: flex;
+      justify-content: center;
+      gap: 4rem;
+      margin-top: 3rem;
+    }
+
+    .stat-item {
+      text-align: center;
+      color: white;
+    }
+
+    .stat-number {
+      font-size: 2.5rem;
+      font-weight: 800;
+      display: block;
+      margin-bottom: 0.5rem;
+    }
+
+    .stat-label {
+      font-size: 0.9rem;
+      opacity: 0.9;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    /* Filter Controls */
+    .filter-section {
+      max-width: 1400px;
+      margin: -3rem auto 0;
+      padding: 0 2rem;
+      position: relative;
+      z-index: 10;
+    }
+
+    .filter-container {
+      background: var(--bg-primary);
+      border-radius: 2rem;
+      padding: 2rem;
+      box-shadow: var(--shadow-xl);
+      border: 1px solid rgba(226, 232, 240, 0.8);
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 1rem;
+      margin-bottom: 4rem;
+    }
+
+    .filter-btn {
+      background: var(--bg-tertiary);
+      color: var(--text-secondary);
+      border: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 1rem;
+      font-weight: 600;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .filter-btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, var(--primary), var(--accent));
+      transition: left 0.3s ease;
+      z-index: -1;
+    }
+
+    .filter-btn:hover,
+    .filter-btn.active {
+      color: white;
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+    }
+
+    .filter-btn:hover::before,
+    .filter-btn.active::before {
+      left: 0;
+    }
+
+    /* Members Grid */
+    .members-section {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0 2rem;
+    }
+
+    .members-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      /* exactly 4 columns */
+      gap: 2rem;
+      margin-bottom: 4rem;
+    }
 
 
+    .member-card {
+      background: var(--bg-primary);
+      border-radius: 2rem;
+      overflow: hidden;
+      box-shadow: var(--shadow-lg);
+      border: 1px solid rgba(226, 232, 240, 0.8);
+      transition: all 0.4s ease;
+      position: relative;
+      group: hover;
+    }
+
+    .member-card:hover {
+      transform: translateY(-8px);
+      box-shadow: var(--shadow-2xl);
+    }
+
+    .member-image-container {
+      position: relative;
+      height: 280px;
+      overflow: hidden;
+    }
+
+    .member-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.4s ease;
+    }
+
+    .member-card:hover .member-img {
+      transform: scale(1.05);
+    }
+
+    .member-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(135deg, rgba(99, 102, 241, 0.8), rgba(236, 72, 153, 0.8));
+      opacity: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: opacity 0.3s ease;
+    }
+
+    .member-card:hover .member-overlay {
+      opacity: 1;
+    }
+
+    .view-profile-btn {
+      background: white;
+      color: var(--primary);
+      border: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 1rem;
+      font-weight: 600;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: all 0.3s ease;
+      transform: translateY(20px);
+    }
+
+    .member-card:hover .view-profile-btn {
+      transform: translateY(0);
+    }
+
+    .view-profile-btn:hover {
+      background: var(--bg-secondary);
+      transform: translateY(-2px);
+    }
+
+    .member-status {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      background: var(--accent);
+      color: white;
+      padding: 0.5rem 1rem;
+      border-radius: 1rem;
+      font-size: 0.8rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      background: white;
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+
+      0%,
+      100% {
+        opacity: 1;
+      }
+
+      50% {
+        opacity: 0.5;
+      }
+    }
+
+    .member-info {
+      padding: 2rem;
+    }
+
+    .member-name {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 0.5rem;
+    }
+
+    .member-position {
+      color: var(--primary);
+      font-weight: 600;
+      font-size: 1rem;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .position-icon {
+      width: 24px;
+      height: 24px;
+      background: var(--primary);
+      color: white;
+      border-radius: 0.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+    }
+
+    .member-contact {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 1.5rem;
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+    }
+
+    .contact-icon {
+      width: 32px;
+      height: 32px;
+      background: var(--bg-tertiary);
+      color: var(--text-secondary);
+      border-radius: 0.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.8rem;
+    }
+
+    .social-links {
+      display: flex;
+      gap: 0.75rem;
+    }
+
+    .social-link {
+      width: 40px;
+      height: 40px;
+      background: var(--bg-tertiary);
+      color: var(--text-secondary);
+      border-radius: 0.75rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      font-size: 0.9rem;
+    }
+
+    .social-link:hover {
+      background: var(--primary);
+      color: white;
+      transform: translateY(-2px);
+    }
+
+    .social-link:nth-child(1):hover {
+      background: #0077b5;
+    }
+
+    .social-link:nth-child(2):hover {
+      background: #4285f4;
+    }
+
+    .social-link:nth-child(3):hover {
+      background: #00d4aa;
+    }
+
+    .social-link:nth-child(4):hover {
+      background: var(--accent);
+    }
+
+    .profile-link {
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      color: white;
+      text-decoration: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 1rem;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: all 0.3s ease;
+      font-size: 0.9rem;
+    }
+
+    .profile-link:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+      background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+    }
+
+    /* Specialty Cards for Alternating Layout */
+    .member-card:nth-child(3n+2) {
+      background: linear-gradient(135deg, rgba(99, 102, 241, 0.02), rgba(236, 72, 153, 0.02));
+    }
+
+    .member-card:nth-child(4n+3) {
+      transform: translateY(-1rem);
+    }
+
+    .member-card:nth-child(5n+4) {
+      background: linear-gradient(135deg, rgba(245, 158, 11, 0.02), rgba(99, 102, 241, 0.02));
+    }
+
+    /* Footer */
+    .footer {
+      background: var(--text-primary);
+      color: white;
+      padding: 4rem 0 2rem;
+      margin-top: 6rem;
+      position: relative;
+    }
+
+    .footer::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    }
+
+    .footer-content {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0 2rem;
+      text-align: center;
+    }
+
+    .footer-links {
+      display: flex;
+      justify-content: center;
+      gap: 2rem;
+      margin-bottom: 2rem;
+    }
+
+    .footer-link {
+      color: rgba(255, 255, 255, 0.7);
+      text-decoration: none;
+      transition: color 0.3s ease;
+    }
+
+    .footer-link:hover {
+      color: white;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 1024px) {
+      .hero h1 {
+        font-size: 3rem;
+      }
+
+      .hero-stats {
+        gap: 2rem;
+      }
+
+      .members-grid {
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      }
+
+      .member-card:nth-child(4n+3) {
+        transform: none;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .nav-container {
+        padding: 0 1rem;
+      }
+
+      .hero {
+        padding: 6rem 0 4rem;
+      }
+
+      .hero-content {
+        padding: 0 1rem;
+      }
+
+      .hero h1 {
+        font-size: 2.5rem;
+      }
+
+      .hero-stats {
+        flex-direction: column;
+        gap: 1.5rem;
+      }
+
+      .filter-section {
+        padding: 0 1rem;
+      }
+
+      .filter-container {
+        padding: 1.5rem;
+      }
+
+      .members-section {
+        padding: 0 1rem;
+      }
+
+      .members-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+      }
+
+      .member-info {
+        padding: 1.5rem;
+      }
+    }
+
+    /* Animation */
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .member-card {
+      animation: fadeInUp 0.6s ease forwards;
+    }
+
+    .member-card:nth-child(1) {
+      animation-delay: 0.1s;
+    }
+
+    .member-card:nth-child(2) {
+      animation-delay: 0.2s;
+    }
+
+    .member-card:nth-child(3) {
+      animation-delay: 0.3s;
+    }
+
+    .member-card:nth-child(4) {
+      animation-delay: 0.4s;
+    }
+
+    .member-card:nth-child(5) {
+      animation-delay: 0.5s;
+    }
+
+    .member-card:nth-child(6) {
+      animation-delay: 0.6s;
+    }
+  </style>
 </head>
-<body>
-    <nav class="navbar navbar-expand-lg  bg-light stiky-top">
-        <div class="container">
-            <a class="navbar-brand" href="#">
-                <i class="fas fa-flask me-2"></i>LabProject
-            </a>
-            <button class="navbar-toggler" type="button" data-mdb-toggle="collapse" data-mdb-target="#navbarNav"
-                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <i class="fas fa-bars"></i>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="/team">About Us</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/all-member">Members</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/explore">Projects</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/datasets">Datasets</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#publications">Publications</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'latest_news' %}">Latest News</a>
-                    </li>
-                    <!-- <li class="nav-item">
-                        <a class="nav-link" href="#contact">Contact</a>
-                    </li> -->
-                </ul>
-                {% if user.is_authenticated %}
-                <ul class="navbar-nav ms-3">
-                    <li class="nav-item">
-                        <a class="btn btn-outline-primary" href="/dashboard">Dashboard</a>
-                    </li>
-                </ul>
-                {% else %}
-                <ul class="navbar-nav ms-3">
-           
-                    <li class="nav-item">
-                        <a class="btn btn-outline-primary me-2" href="{% url 'teacher_login' %}">Teacher Access</a>
-                    </li>
-                </ul>
-                {% endif %}
-            </div>
-        </div>
-    </nav>
-    <main class="mt-5">
-        <div class="container mt-5">
-            <div class="row text-center">
-                <!-- First Row of Professors -->
-                <div class="col-md-4">
-                    <div class="border border-secondary rounded p-5 d-flex align-items-center justify-content-center" style="height: 200px;">
-                        <span class="text-muted">No Image Available</span>
-                    </div>
-                    <h5 class="mt-2 fw-bold">Dr. Touhid Bhuiyan</h5>
-                </div>
-                <div class="col-md-4">
-                    <div class="border border-secondary rounded p-5 d-flex align-items-center justify-content-center" style="height: 200px;">
-                        <span class="text-muted">No Image Available</span>
-                    </div>
-                    <h5 class="mt-2 fw-bold">Dr. Shamsul Arefin</h5>
-                </div>
-                <div class="col-md-4">
-                    <div class="border border-secondary rounded p-5 d-flex align-items-center justify-content-center" style="height: 200px;">
-                        <span class="text-muted">No Image Available</span>
-                    </div>
-                    <h5 class="mt-2 fw-bold">Dr. Sheikh Rashed Haider Noori</h5>
-                </div>
-            </div>
-        
-            <hr class="my-5">
-        
-            <!-- Second Row - Investigator -->
-            <div class="row align-items-center">
-                <div class="col-md-4">
-                    <div class="border border-secondary rounded p-5 d-flex align-items-center justify-content-center" style="height: 400px;">
-                        <span class="text-muted">No Image Available</span>
-                    </div>
-                </div>
-                <div class="col-md-8">
-                    <h4 class="fw-bold">Afjal Hossan Sarower</h4>
-                    <p><strong>Principal Investigator</strong><br>
-                        Senior Lecturer<br>
-                        Department of Computer Science and Engineering<br>
-                        Daffodil International University
-                    </p>
-                    <p>
-                        <strong>Phone:</strong> 01869045878 <br>
-                        <strong>Email:</strong> <a href="mailto:afjal.cse@diu.edu.bd">afjal.cse@diu.edu.bd</a> <br>
-                        <strong>Office:</strong> 317/10, KT, DIU.
-                    </p>
-                </div>
-            </div>
-        </div>
-    </main>
-</body>
-</html>
 
+<body>
+  <!-- Navigation -->
+  <nav class="navbar">
+    <div class="nav-container">
+      <a href="#" class="nav-brand">
+        <i class="fas fa-flask"></i>
+        Research Lab
+      </a>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="hero-content">
+      <h1>Founding Faculty</h1>
+      <p class="hero-subtitle">Meet the visionary educators and researchers who established our cutting-edge research
+        lab, driving innovation and excellence in their respective fields.</p>
+
+      <div class="hero-stats">
+        <div class="stat-item">
+          <span class="stat-number">15+</span>
+          <span class="stat-label">Faculty Members</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-number">200+</span>
+          <span class="stat-label">Publications</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-number">50+</span>
+          <span class="stat-label">Research Projects</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Filter Controls -->
+  <div class="filter-section">
+    <div class="filter-container">
+      <button class="filter-btn active" data-filter="all">
+        <i class="fas fa-users"></i>
+        All Faculty
+      </button>
+      <button class="filter-btn" data-filter="computer-science">
+        <i class="fas fa-laptop-code"></i>
+        Computer Science
+      </button>
+      <button class="filter-btn" data-filter="electrical-engineering">
+        <i class="fas fa-microchip"></i>
+        Electrical Engineering
+      </button>
+      <button class="filter-btn" data-filter="data-science">
+        <i class="fas fa-chart-line"></i>
+        Data Science
+      </button>
+      <button class="filter-btn" data-filter="ai">
+        <i class="fas fa-robot"></i>
+        Artificial Intelligence
+      </button>
+    </div>
+  </div>
+
+  <!-- Members Grid -->
+  <section class="members-section">
+    <div class="members-grid">
+      {% for facultyProfile in facultyProfiles %}
+       <a href="{% url 'team_member_details' facultyProfile.user.id %}">
+      <article class="member-card" data-category="computer-science">
+        <div class="member-image-container">
+          <img src="{{facultyProfile.profile_image.url}}" class="member-img" alt="{{facultyProfile.user.username}}">
+          <div class="member-status">
+            <div class="status-dot"></div>
+            Active
+          </div>
+          <div class="member-overlay">
+            <a href="{% url 'team_member_details' facultyProfile.user.id %}" class="view-profile-btn">
+              <i class="fas fa-user"></i>
+              View Profile
+            </a>
+          </div>
+        </div>
+
+        <div class="member-info">
+          <h3 class="member-name">{{facultyProfile.user.first_name}} {{facultyProfile.user.last_name}}</</h3>
+          <div class="member-position">
+            <div class="position-icon">
+              <i class="fas fa-graduation-cap"></i>
+            </div>
+            {{facultyProfile.position}}
+          </div>
+
+          <div class="member-contact">
+            <div class="contact-icon">
+              <i class="fas fa-envelope"></i>
+            </div>
+            <span>{{facultyProfile.user.email}}</span>
+          </div>
+
+          <div class="social-links">
+            <a href="{{facultyProfile.linkedin_url}}" class="social-link" title="LinkedIn">
+              <i class="fab fa-linkedin"></i>
+            </a>
+            <a href="{{facultyProfile.google_scholar_url}}" class="social-link" title="Google Scholar">
+              <i class="fas fa-graduation-cap"></i>
+            </a>
+            <a href="{{facultyProfile.researchgate_url}}" class="social-link" title="ResearchGate">
+              <i class="fab fa-researchgate"></i>
+            </a>
+            <a href="{{facultyProfile.personal_website}}" class="social-link" title="Personal Website">
+              <i class="fas fa-link"></i>
+            </a>
+          </div>
+<!-- 
+          <a href="{% url 'team_member_details' facultyProfile.user.id %}" class="profile-link">
+            <i class="fas fa-arrow-right"></i>
+            View Full Profile
+          </a> -->
+        </div>
+      </article>
+      </a>
+      {% endfor %}
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-content">
+      <div class="footer-links">
+        <a href="#" class="footer-link">About</a>
+        <a href="#" class="footer-link">Research</a>
+        <a href="#" class="footer-link">Publications</a>
+        <a href="#" class="footer-link">Contact</a>
+      </div>
+      <p>© 2024 Research Lab, University Name. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script>
+    // Filter functionality
+    document.addEventListener('DOMContentLoaded', function () {
+      const filterBtns = document.querySelectorAll('.filter-btn');
+      const memberCards = document.querySelectorAll('.member-card');
+
+      filterBtns.forEach(btn => {
+        btn.addEventListener('click', function () {
+          // Remove active class from all buttons
+          filterBtns.forEach(b => b.classList.remove('active'));
+          // Add active class to clicked button
+          this.classList.add('active');
+
+          const filter = this.getAttribute('data-filter');
+
+          memberCards.forEach(card => {
+            if (filter === 'all' || card.getAttribute('data-category') === filter) {
+              card.style.display = 'block';
+              card.style.animation = 'fadeInUp 0.6s ease forwards';
+            } else {
+              card.style.display = 'none';
+            }
+          });
+        });
+      });
+
+      // Scroll animations
+      const observerOptions = {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+      };
+
+      const observer = new IntersectionObserver(function (entries) {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.style.opacity = '1';
+            entry.target.style.transform = 'translateY(0)';
+          }
+        });
+      }, observerOptions);
+
+      memberCards.forEach(card => {
+        card.style.opacity = '0';
+        card.style.transform = 'translateY(30px)';
+        card.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+        observer.observe(card);
+      });
+    });
+  </script>
+</body>
+
+</html>

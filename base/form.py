@@ -6,10 +6,31 @@ from django import forms
 import re
 from .models import Student
 
+import re
+from django import forms
+from .models import Student
+from django.contrib.auth.models import User
+
 class StudentProfileForm(forms.ModelForm):
+    first_name = forms.CharField(
+        max_length=30,
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'Enter your first name'
+        })
+    )
+    last_name = forms.CharField(
+        max_length=30,
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'Enter your last name'
+        })
+    )
+
     class Meta:
         model = Student
-        fields = ['about', 'phone', 'profile_picture', 'skills', 'cv', 'google_scholar_profile', 'linkin_profile', 'github_profile']
+        fields = ['about', 'phone', 'profile_picture', 'skills', 'cv',
+                  'google_scholar_profile', 'linkin_profile', 'github_profile']
         
         widgets = {
             'about': forms.Textarea(attrs={
@@ -47,11 +68,30 @@ class StudentProfileForm(forms.ModelForm):
                 'placeholder': 'Enter GitHub URL'
             }),
         }
-        
+
         help_texts = {
             'phone': 'Enter an 11-digit phone number',
             'skills': 'Separate skills with commas (e.g., Python, Django, ML)',
         }
+
+    def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop('user', None)
+        super().__init__(*args, **kwargs)
+        if self.instance and self.instance.user:
+            self.fields['first_name'].initial = self.instance.user.first_name
+            self.fields['last_name'].initial = self.instance.user.last_name
+
+    def save(self, commit=True):
+        student = super().save(commit=False)
+        if self.user:
+            self.user.first_name = self.cleaned_data['first_name']
+            self.user.last_name = self.cleaned_data['last_name']
+            if commit:
+                self.user.save()
+        if commit:
+            student.save()
+            self.save_m2m()
+        return student
 
     def clean_phone(self):
         phone = self.cleaned_data.get('phone')
@@ -65,6 +105,7 @@ class StudentProfileForm(forms.ModelForm):
             raise forms.ValidationError('At least one skill is required.')
         return skills
 
+
     
 from .models import News
 
@@ -74,33 +115,20 @@ class NewsForm(forms.ModelForm):
         fields = ['title', 'content', 'image']
         
 
+from django.forms import inlineformset_factory
+from .models import Dataset, DatasetImage
+
 class DatasetForm(forms.ModelForm):
     class Meta:
         model = Dataset
         fields = ['title', 'dataset_link', 'file', 'is_private']
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-        # Apply MDB styling to each field
-        self.fields['title'].widget.attrs.update({
-            'class': 'form-control',
-            'style': 'rows:10',
-            'placeholder': 'Enter dataset title',
-        })
-        self.fields['dataset_link'].widget.attrs.update({
-            'class': 'form-control',
-            'placeholder': 'Enter dataset link (optional)',
-        })
-        self.fields['file'].widget.attrs.update({
-            'class': 'form-control',
-        })
-        self.fields['is_private'].widget.attrs.update({
-            'class': 'form-check-input',
-        })
-
-        # Add labels with MDB styling
-        self.fields['title'].label = 'Title'
-        self.fields['dataset_link'].label = 'Dataset Link'
-        self.fields['file'].label = 'Upload File'
-        self.fields['is_private'].label = 'Private Dataset'
+# DatasetImageFormSet = inlineformset_factory(
+#     Dataset,
+#     DatasetImage,
+#     fields=['image'],
+#     extra=4,
+#     max_num=4,
+#     can_delete=True,
+#     widgets={'image': forms.ClearableFileInput(attrs={'class': 'form-control'})}
+# )

@@ -3,214 +3,569 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lab Project Manager</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.0/mdb.min.css" rel="stylesheet">
+    <title>LabProject | Academic Research Management</title>
+    <!-- Font Awesome -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <!-- MDB -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.0/mdb.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+   <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@300;400;500;700&display=swap" rel="stylesheet">
+  
+
     <style>
-        /* Custom Styles */
+        :root {
+            --primary-color: #4361ee;
+            --secondary-color: #3f37c9;
+            --accent-color: #7209b7;
+            --dark-color: #212529;
+            --light-color: #f8f9fa;
+            --gradient: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        }
+        
         body {
-            font-family: 'Roboto', sans-serif;
-            background: #f8f9fa;
+                  font-family: "Ubuntu", sans-serif;
+
+            background-color: var(--light-color);
+            color: var(--dark-color);
+            line-height: 1.6;
+        }
+        
+        /* Navbar Styles */
+        .navbar {
+            background-color: white;
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.08);
+            padding: 0.8rem 0;
+        }
+        
+        .navbar-brand {
+            font-weight: 700;
+            font-size: 1.2rem;
+            color: var(--primary-color) !important;
+            display: flex;
+            align-items: center;
+        }
+        
+        .navbar-brand i {
+            margin-right: 0.5rem;
+        }
+        
+        .nav-link {
+            font-weight: 500;
+            /* padding: 0.5rem 1rem !important; */
+            color: var(--dark-color) !important;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-link:hover {
+            color: var(--primary-color) !important;
+            transform: translateY(-2px);
+        }
+        
+        .nav-link.active {
+            color: var(--primary-color) !important;
+            font-weight: 600;
+        }
+        
+        /* Hero Section */
+        .hero-section {
+            background: var(--gradient);
+            color: white;
+            padding: 8rem 0 6rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiPjxkZWZzPjxwYXR0ZXJuIGlkPSJwYXR0ZXJuIiB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHBhdHRlcm5Vbml0cz0idXNlclNwYWNlT25Vc2UiIHBhdHRlcm5UcmFuc2Zvcm09InJvdGF0ZSg0NSkiPjxyZWN0IHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCIgZmlsbD0icmdiYSgyNTUsMjU1LDI1NSwwLjA1KSIvPjwvcGF0dGVybj48L2RlZnM+PHJlY3Qgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsbD0idXJsKCNwYXR0ZXJuKSIvPjwvc3ZnPg==');
+            opacity: 0.3;
+        }
+        
+        .hero-content {
+            position: relative;
+            z-index: 2;
+        }
+        
+        .hero-title {
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            line-height: 1.2;
+        }
+        
+        .hero-subtitle {
+            font-size: 1.5rem;
+            font-weight: 300;
+            margin-bottom: 2.5rem;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .hero-buttons .btn {
+            padding: 0.8rem 2rem;
+            font-size: 1.1rem;
+            font-weight: 500;
+            border-radius: 50px;
+            margin: 0 0.5rem;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--secondary-color);
+            border-color: var(--secondary-color);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .btn-outline-light:hover {
+            background-color: white;
+            color: var(--primary-color) !important;
         }
 
-        /* Gradient Background for Hero Section */
-        .hero-section {
-            background: linear-gradient(135deg, #6a11cb, #2575fc);
-            color: white;
-            padding: 150px 0;
-            text-align: center;
+        /* Notice Board Styles */
+        .notice-board {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 4rem 0;
             position: relative;
             overflow: hidden;
         }
 
-        .hero-section h1 {
-            font-size: 4rem;
-            font-weight: 700;
-            margin-bottom: 1.5rem;
-            animation: fadeInDown 1s ease;
-        }
-
-        .hero-section p {
-            font-size: 1.5rem;
-            margin-bottom: 2rem;
-            animation: fadeInUp 1s ease;
-        }
-
-        .hero-section .btn {
-            font-size: 1.2rem;
-            padding: 10px 30px;
-            animation: fadeIn 1.5s ease;
-        }
-
-        /* Animated Background Effect */
-        .hero-section::before {
+        .notice-board::before {
             content: '';
             position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 10%, transparent 10.01%);
-            background-size: 20px 20px;
-            animation: moveBackground 20s linear infinite;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCI+PGRlZnM+PHBhdHRlcm4gaWQ9InBhdHRlcm4iIHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PGNpcmNsZSBjeD0iMzAiIGN5PSIzMCIgcj0iMiIgZmlsbD0icmdiYSgyNTUsMjU1LDI1NSwwLjEpIi8+PC9wYXR0ZXJuPjwvZGVmcz48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJ1cmwoI3BhdHRlcm4pIi8+PC9zdmc+');
+            opacity: 0.4;
+        }
+
+        .notice-board .container {
+            position: relative;
+            z-index: 2;
+        }
+
+        .notice-board .section-title {
+            color: white;
+            margin-bottom: 3rem;
+        }
+
+        .notice-board .section-title::after {
+            background: linear-gradient(135deg, #fff, #f0f0f0);
+        }
+
+        .notice-container {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 2rem;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        .notice-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .notice-title {
+            color: white;
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin: 0;
+            display: flex;
+            align-items: center;
+        }
+
+        .notice-title i {
+            margin-right: 0.8rem;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 0.5rem;
+            border-radius: 50%;
+        }
+
+        .view-all-btn {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 0.5rem 1.2rem;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
+        }
+
+        .view-all-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .notice-item {
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            border-left: 4px solid #ffd700;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .notice-item:hover {
+            background: rgba(255, 255, 255, 0.25);
+            transform: translateX(5px);
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .notice-item.urgent {
+            border-left-color: #ff4757;
+            animation: pulse 2s infinite;
+        }
+
+        .notice-item.important {
+            border-left-color: #ffa502;
+        }
+
+        .notice-item.normal {
+            border-left-color: #2ed573;
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(255, 71, 87, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(255, 71, 87, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(255, 71, 87, 0); }
+        }
+
+        .notice-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 0.8rem;
+        }
+
+        .notice-date {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .notice-date i {
+            margin-right: 0.5rem;
+        }
+
+        .notice-priority {
+            padding: 0.2rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            text-transform: uppercase;
+        }
+
+        .priority-urgent {
+            background: rgba(255, 71, 87, 0.3);
+            color: #ff4757;
+            border: 1px solid rgba(255, 71, 87, 0.5);
+        }
+
+        .priority-important {
+            background: rgba(255, 165, 2, 0.3);
+            color: #ffa502;
+            border: 1px solid rgba(255, 165, 2, 0.5);
+        }
+
+        .priority-normal {
+            background: rgba(46, 213, 115, 0.3);
+            color: #2ed573;
+            border: 1px solid rgba(46, 213, 115, 0.5);
+        }
+
+        .notice-title-text {
+            color: white;
+            font-weight: 600;
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+            line-height: 1.4;
+        }
+
+        .notice-content {
+            color: rgba(255, 255, 255, 0.9);
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+
+        .notice-author {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .notice-author i {
+            margin-right: 0.5rem;
+        }
+
+        .no-notices {
+            text-align: center;
+            color: rgba(255, 255, 255, 0.8);
+            padding: 3rem 0;
+        }
+
+        .no-notices i {
+            font-size: 4rem;
+            margin-bottom: 1rem;
             opacity: 0.5;
         }
 
-        /* Keyframes for Animations */
-        @keyframes fadeInDown {
-            from {
-                opacity: 0;
-                transform: translateY(-50px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+        /* Marquee for urgent notices */
+        .urgent-marquee {
+            background: linear-gradient(90deg, #ff4757, #ff3742);
+            color: white;
+            padding: 0.8rem 0;
+            overflow: hidden;
+            white-space: nowrap;
+            position: relative;
+            margin-bottom: 2rem;
+            border-radius: 8px;
         }
 
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(50px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+        .marquee-content {
+            display: inline-block;
+            animation: marquee 20s linear infinite;
+            padding-left: 100%;
         }
 
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-            }
-            to {
-                opacity: 1;
-            }
+        @keyframes marquee {
+            0% { transform: translateX(0%); }
+            100% { transform: translateX(-100%); }
         }
-
-        @keyframes moveBackground {
-            from {
-                transform: translate(0, 0);
-            }
-            to {
-                transform: translate(50%, 50%);
-            }
+        
+        /* Features Section */
+        .section-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 3rem;
+            color: var(--dark-color);
+            position: relative;
+            display: inline-block;
         }
-
-        /* Feature Cards */
+        
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            width: 60px;
+            height: 4px;
+            background: var(--gradient);
+            border-radius: 2px;
+        }
+        
         .feature-card {
             background: white;
             border: none;
             border-radius: 15px;
-            padding: 2rem;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-
-        .feature-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
-        }
-
-        .feature-card .icon-lg {
-            font-size: 3rem;
-            margin-bottom: 1.5rem;
-            color: #2575fc;
-        }
-
-        /* Testimonials Section */
-        .testimonial-card {
-            background: white;
-            border-left: 4px solid #2575fc;
-            border-radius: 10px;
-            padding: 1.5rem;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s ease;
-        }
-
-        .testimonial-card:hover {
-            transform: translateY(-5px);
-        }
-
-        .testimonial-card blockquote {
-            font-size: 1rem;
-            color: #555;
-        }
-
-        /* Footer */
-        .footer {
-            background: #2c3e50;
-            color: white;
-            padding: 2rem 0;
-        }
-
-        .footer a {
-            color: #2575fc;
-            text-decoration: none;
-        }
-
-        .footer a:hover {
-            color: #6a11cb;
-        }
-
-        /* Menubar */
-        .navbar {
-            background: white;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-        }
-
-        .navbar-brand {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: #2575fc !important;
-        }
-
-        .navbar-nav .nav-link {
-            font-size: 1rem;
-            font-weight: 500;
-            color: #333 !important;
-            margin: 0 10px;
-            transition: color 0.3s ease;
-        }
-
-        .navbar-nav .nav-link:hover {
-            color: #6a11cb !important;
-        }
-
-        .navbar-nav .nav-link.active {
-            color: #6a11cb !important;
-            font-weight: 600;
-        }
-
-        /* Buttons */
-        .btn-primary {
-            background: #2575fc;
-            border: none;
-            transition: background 0.3s ease;
-        }
-
-        .btn-primary:hover {
-            background: #6a11cb;
-        }
-
-        .btn-outline-primary {
-            border-color: #2575fc;
-            color: #2575fc;
+            padding: 2.5rem 2rem;
+            height: 100%;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
             transition: all 0.3s ease;
         }
-
-        .btn-outline-primary:hover {
-            background: #2575fc;
+        
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+        }
+        
+        .feature-icon {
+            font-size: 3rem;
+            color: var(--primary-color);
+            margin-bottom: 1.5rem;
+        }
+        
+        .feature-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+        
+        /* Testimonials */
+        .testimonial-card {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            position: relative;
+            transition: all 0.3s ease;
+        }
+        
+        .testimonial-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+        
+        .testimonial-card::before {
+            content: '"';
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            font-size: 5rem;
+            color: rgba(67, 97, 238, 0.1);
+            font-family: Georgia, serif;
+            line-height: 1;
+        }
+        
+        .testimonial-text {
+            position: relative;
+            z-index: 2;
+            font-style: italic;
+            color: #555;
+            margin-bottom: 1.5rem;
+        }
+        
+        .testimonial-author {
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+        
+        /* Footer */
+        .footer {
+            background-color: var(--dark-color);
             color: white;
+            padding: 4rem 0 2rem;
+        }
+        
+        .footer-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+        }
+        
+        .footer-links {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .footer-links li {
+            margin-bottom: 0.8rem;
+        }
+        
+        .footer-links a {
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        
+        .footer-links a:hover {
+            color: white;
+            padding-left: 5px;
+        }
+        
+        .social-links a {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            color: white;
+            margin-right: 10px;
+            transition: all 0.3s ease;
+        }
+        
+        .social-links a:hover {
+            background: var(--primary-color);
+            transform: translateY(-3px);
+        }
+        
+        .copyright {
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding-top: 1.5rem;
+            margin-top: 2rem;
+            color: rgba(255, 255, 255, 0.5);
+        }
+        
+        /* Responsive Adjustments */
+        @media (max-width: 992px) {
+            .hero-title {
+                font-size: 2.8rem;
+            }
+            
+            .hero-subtitle {
+                font-size: 1.3rem;
+            }
+            
+            .notice-header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+
+            .notice-meta {
+                flex-direction: column;
+                gap: 0.5rem;
+                align-items: flex-start;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 2.2rem;
+            }
+            
+            .hero-subtitle {
+                font-size: 1.1rem;
+            }
+            
+            .hero-buttons .btn {
+                display: block;
+                width: 100%;
+                margin-bottom: 1rem;
+            }
+            
+            .section-title {
+                font-size: 2rem;
+            }
+
+            .notice-container {
+                padding: 1.5rem;
+            }
+
+            .notice-item {
+                padding: 1rem;
+            }
+
+            .urgent-marquee {
+                font-size: 0.9rem;
+            }
         }
     </style>
 </head>
 <body>
-
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-light fixed-top">
         <div class="container">
-            <a class="navbar-brand" href="#">
-                <i class="fas fa-flask me-2"></i>LabProject
+            <a class="navbar-brand" href="/">
+                <i class="fas fa-flask"></i>LabProject
             </a>
             <button class="navbar-toggler" type="button" data-mdb-toggle="collapse" data-mdb-target="#navbarNav"
                 aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -230,89 +585,163 @@
                     <li class="nav-item">
                         <a class="nav-link" href="/datasets">Datasets</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#publications">Publications</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'latest_news' %}">Latest News</a>
-                    </li>
                     <!-- <li class="nav-item">
-                        <a class="nav-link" href="#contact">Contact</a>
+                        <a class="nav-link" href="#publications">Publications</a>
                     </li> -->
-                </ul>
-                {% if user.is_authenticated %}
-                <ul class="navbar-nav ms-3">
                     <li class="nav-item">
-                        <a class="btn btn-outline-primary" href="/dashboard">Dashboard</a>
+                        <a class="nav-link" href="{% url 'latest_news' %}">News</a>
                     </li>
                 </ul>
-                {% else %}
-                <ul class="navbar-nav ms-3">
-           
-                    <li class="nav-item">
-                        <a class="btn btn-outline-primary me-2" href="{% url 'teacher_login' %}">Teacher Access</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="btn btn-primary me-2" href="{% url 'student_login' %}">Student Access</a>
-                    </li>
-                </ul>
-                {% endif %}
+                <div class="ms-lg-3 mt-3 mt-lg-0">
+                    {% if user.is_authenticated %}
+                    <a href="/dashboard" class="btn btn-outline-primary">Dashboard</a>
+                    {% else %}
+                    <div class="d-flex flex-column flex-sm-row gap-2">
+                        <a href="{% url 'teacher_login' %}" class="btn btn-outline-primary btn-sm">Teacher Access</a>
+                        <a href="{% url 'student_login' %}" class="btn btn-primary btn-sm">Student Access</a>
+                    </div>
+                    {% endif %}
+                </div>
             </div>
         </div>
     </nav>
 
     <!-- Hero Section -->
     <section class="hero-section">
-        <div class="container">
-            <h1>Streamline Your Lab Projects</h1>
-            <p>Efficient project management for academic laboratories</p>
-            <div class="d-flex gap-3 justify-content-center" >
-                <a href="{% url 'explore' %}" class="btn btn-light btn-lg"style="z-index: 99;">
+        <div class="container text-center hero-content">
+            <h1 class="hero-title">Streamline Your Academic Research</h1>
+            <p class="hero-subtitle">A comprehensive platform for managing lab projects, datasets, and collaborations in academic environments</p>
+            <div class="hero-buttons">
+                <a href="{% url 'explore' %}" class="btn btn-light btn-outline-light">
                     <i class="fas fa-binoculars me-2"></i>Explore Projects
                 </a>
+                {% if not user.is_authenticated %}
+                <a href="{% url 'student_login' %}" class="btn btn-primary">
+                    <i class="fas fa-sign-in-alt me-2"></i>Get Started
+                </a>
+                {% endif %}
+            </div>
+        </div>
+    </section>
+
+    <!-- Notice Board Section -->
+    <section class="notice-board" id="notices">
+        <div class="container">
+            <h2 class="text-center section-title">Notice Board</h2>
+            
+            <!-- Urgent Notice Marquee -->
+            <!-- <div class="urgent-marquee">
+                <div class="marquee-content">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    URGENT: Lab safety training mandatory for all students by May 30th | Submit project proposals by June 5th | New equipment training sessions available
+                </div>
+            </div> -->
+
+            <div class="notice-container">
+                <div class="notice-header">
+                    <h3 class="notice-title">
+                        <i class="fas fa-bullhorn"></i>
+                        Latest Announcements
+                    </h3>
+                    <a href="/latest-news" class="view-all-btn">
+                        <i class="fas fa-arrow-right me-1"></i>View All
+                    </a>
+                </div>
+
+                <div class="notices-list">
+                    {% for news in newses %}
+                    <!-- Notice 1 - Urgent -->
+                    <div class="notice-item urgent">
+                        <div class="notice-meta">
+                            <div class="notice-date">
+                                <i class="fas fa-calendar-alt"></i>
+                               {{news.created_at}}
+                            </div>
+                            <span class="notice-priority priority-urgent">{{news.priority}}</span>
+                        </div>
+                        <h4 class="notice-title-text">{{news.title}}</h4>
+                        <p class="notice-content">
+                            {{news.content}}
+                        </p>
+                        <div class="notice-author">
+                            <i class="fas fa-user"></i>
+                            {{news.author.user.username}}
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
             </div>
         </div>
     </section>
 
     <!-- Features Section -->
-    <section class="py-5" id="features">
+    <section class="py-5 my-5" id="features">
         <div class="container">
-            <h2 class="text-center mb-5">Key Features</h2>
+            <h2 class="text-center section-title">Key Features</h2>
             <div class="row g-4">
                 <!-- Feature 1 -->
                 <div class="col-md-4">
-                    <div class="card feature-card h-100">
-                        <div class="card-body text-center p-4">
-                            <div class="icon-lg mb-4">
-                                <i class="fas fa-project-diagram"></i>
-                            </div>
-                            <h4 class="mb-3">Project Creation</h4>
-                            <p class="text-muted">Teachers can create lab projects with detailed specifications and requirements.</p>
+                    <div class="feature-card text-center">
+                        <div class="feature-icon">
+                            <i class="fas fa-project-diagram"></i>
                         </div>
+                        <h3 class="feature-title">Project Management</h3>
+                        <p>Teachers can create and manage lab projects with detailed specifications, timelines, and milestones.</p>
                     </div>
                 </div>
+                
                 <!-- Feature 2 -->
                 <div class="col-md-4">
-                    <div class="card feature-card h-100">
-                        <div class="card-body text-center p-4">
-                            <div class="icon-lg mb-4">
-                                <i class="fas fa-users-cog"></i>
-                            </div>
-                            <h4 class="mb-3">Student Assignment</h4>
-                            <p class="text-muted">Teachers can assign students to projects with role management.</p>
+                    <div class="feature-card text-center">
+                        <div class="feature-icon">
+                            <i class="fas fa-users-cog"></i>
                         </div>
+                        <h3 class="feature-title">Team Collaboration</h3>
+                        <p>Assign students to projects with specific roles and track their progress through integrated tools.</p>
                     </div>
                 </div>
+                
                 <!-- Feature 3 -->
                 <div class="col-md-4">
-                    <div class="card feature-card h-100">
-                        <div class="card-body text-center p-4">
-                            <div class="icon-lg mb-4">
-                                <i class="fas fa-database"></i>
-                            </div>
-                            <h4 class="mb-3">Datasets</h4>
-                            <p class="text-muted">User can contribute in dataset Library.</p>
+                    <div class="feature-card text-center">
+                        <div class="feature-icon">
+                            <i class="fas fa-database"></i>
                         </div>
+                        <h3 class="feature-title">Dataset Repository</h3>
+                        <p>Centralized storage for research datasets with version control and access management features.</p>
+                    </div>
+                </div>
+                
+                <!-- Feature 4 -->
+                <div class="col-md-4">
+                    <div class="feature-card text-center">
+                        <div class="feature-icon">
+                            <i class="fas fa-file-alt"></i>
+                        </div>
+                        <h3 class="feature-title">Publication Tracking</h3>
+                        <p>Manage and showcase research publications with proper attribution and collaboration details.</p>
+                    </div>
+                </div>
+                
+                <!-- Feature 5 -->
+                <div class="col-md-4">
+                    <div class="feature-card text-center">
+                        <div class="feature-icon">
+                            <i class="fas fa-bell"></i>
+                        </div>
+                        <h3 class="feature-title">Real-time Notifications</h3>
+                        <p>Stay updated with project activities, deadlines, and important announcements.</p>
+                    </div>
+                </div>
+                
+                <!-- Feature 6 -->
+                <div class="col-md-4">
+                    <div class="feature-card text-center">
+                        <div class="feature-icon">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <h3 class="feature-title">Analytics Dashboard</h3>
+                        <p>Visualize project progress, resource allocation, and research output metrics.</p>
                     </div>
                 </div>
             </div>
@@ -320,34 +749,46 @@
     </section>
 
     <!-- Testimonials Section -->
-    <section class="py-5">
+    <!-- <section class="py-5 my-5 bg-light">
         <div class="container">
-            <h2 class="text-center mb-5">What Users Say</h2>
+            <h2 class="text-center section-title">What Our Users Say</h2>
             <div class="row g-4">
                 <div class="col-md-6">
-                    <div class="card h-100 testimonial-card">
-                        <div class="card-body">
-                            <blockquote class="blockquote mb-0">
-                                <p class="text-muted">"This system revolutionized how we manage lab projects. The assignment and tracking features are invaluable."</p>
-                                <footer class="blockquote-footer mt-3">
-                                    Dr. Sarah Johnson, <cite>Physics Department</cite>
-                                </footer>
-                            </blockquote>
-                        </div>
+                    <div class="testimonial-card">
+                        <p class="testimonial-text">This platform has transformed how we manage our lab projects. The intuitive interface and powerful collaboration tools have saved us countless hours of coordination.</p>
+                        <div class="testimonial-author">Dr. Sarah Johnson</div>
+                        <small>Professor, Physics Department</small>
                     </div>
                 </div>
                 <div class="col-md-6">
-                    <div class="card h-100 testimonial-card">
-                        <div class="card-body">
-                            <blockquote class="blockquote mb-0">
-                                <p class="text-muted">"Finally a system that understands academic lab workflows. Makes collaboration seamless!"</p>
-                                <footer class="blockquote-footer mt-3">
-                                    Michael Chen, <cite>Research Student</cite>
-                                </footer>
-                            </blockquote>
-                        </div>
+                    <div class="testimonial-card">
+                        <p class="testimonial-text">As a graduate student, I appreciate how easy it is to track my tasks and collaborate with my team. The dataset repository is particularly valuable for my research.</p>
+                        <div class="testimonial-author">Michael Chen</div>
+                        <small>Research Assistant, Computer Science</small>
                     </div>
                 </div>
+            </div>
+        </div>
+    </section> -->
+
+    <!-- Call to Action -->
+    <section class="py-5 my-5">
+        <div class="container text-center">
+            <h2 class="section-title mb-4">Ready to Transform Your Lab Management?</h2>
+            <p class="mb-5">Join hundreds of academic labs already benefiting from our platform</p>
+            <div class="d-flex justify-content-center gap-3">
+                {% if user.is_authenticated %}
+                <a href="/dashboard" class="btn btn-primary btn-lg">
+                    <i class="fas fa-tachometer-alt me-2"></i>Go to Dashboard
+                </a>
+                {% else %}
+                <a href="{% url 'teacher_login' %}" class="btn btn-outline-primary btn-lg">
+                    <i class="fas fa-chalkboard-teacher me-2"></i>Teacher Login
+                </a>
+                <a href="{% url 'student_login' %}" class="btn btn-primary btn-lg">
+                    <i class="fas fa-user-graduate me-2"></i>Student Login
+                </a>
+                {% endif %}
             </div>
         </div>
     </section>
@@ -356,31 +797,54 @@
     <footer class="footer">
         <div class="container">
             <div class="row g-4">
-                <div class="col-md-6">
-                    <h5><i class="fas fa-flask me-2"></i>LabProject</h5>
-                    <p class="text-muted">Academic Project Management System</p>
+                <div class="col-lg-4">
+                    <h3 class="footer-title">
+                        <i class="fas fa-flask me-2"></i>LabProject
+                    </h3>
+                    <p>Academic research management platform designed to streamline lab projects, collaborations, and resource sharing.</p>
+                    <div class="social-links mt-4">
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-linkedin"></i></a>
+                        <a href="#"><i class="fab fa-github"></i></a>
+                        <a href="#"><i class="fab fa-youtube"></i></a>
+                    </div>
                 </div>
-                <div class="col-md-3">
-                    <h5>Quick Links</h5>
-                    <ul class="list-unstyled">
-                        <li><a href="#features" class="text-white text-decoration-none">Features</a></li>
-                        <li><a href="#contact" class="text-white text-decoration-none">Contact</a></li>
-                        <li><a href="#" class="text-white text-decoration-none">Teacher Portal</a></li>
+                <div class="col-lg-2 col-md-4">
+                    <h3 class="footer-title">Quick Links</h3>
+                    <ul class="footer-links">
+                        <li><a href="/team">About Us</a></li>
+                        <li><a href="/all-member">Members</a></li>
+                        <li><a href="/explore">Projects</a></li>
+                        <li><a href="/datasets">Datasets</a></li>
+                        <li><a href="#publications">Publications</a></li>
                     </ul>
                 </div>
-                <div class="col-md-3">
-                    <h5>Contact</h5>
-                    <ul class="list-unstyled">
-                        <li class="text-muted">labproject@university.edu</li>
-                        <li class="text-muted">+1 (555) 123-4567</li>
+                <div class="col-lg-2 col-md-4">
+                    <h3 class="footer-title">Resources</h3>
+                    <ul class="footer-links">
+                        <li><a href="#">Documentation</a></li>
+                        <li><a href="#">Tutorials</a></li>
+                        <li><a href="#">API</a></li>
+                        <li><a href="#">Help Center</a></li>
+                        <li><a href="#">Community</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-4 col-md-4">
+                    <h3 class="footer-title">Contact Us</h3>
+                    <ul class="footer-links">
+                        <li><i class="fas fa-envelope me-2"></i> labproject@university.edu</li>
+                        <li><i class="fas fa-phone me-2"></i> +1 (555) 123-4567</li>
+                        <li><i class="fas fa-map-marker-alt me-2"></i> Computer Science Building, Room 405</li>
                     </ul>
                 </div>
             </div>
-            <hr class="my-4">
-            <p class="text-center text-muted mb-0">&copy; 2023 LabProject. Academic Use Only.</p>
+            <div class="text-center copyright">
+                &copy; 2023 LabProject. All rights reserved.
+            </div>
         </div>
     </footer>
 
+    <!-- MDB JS -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.0/mdb.min.js"></script>
 </body>
 </html>

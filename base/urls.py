@@ -19,9 +19,12 @@ urlpatterns = [
     path('approve/<int:student_id>/', views.approve_student, name='approve_student'),
     path('profile-update/', views.update_student_profile, name='update_student_profile'),
     path('team/', views.team, name='team'),
+    path('team-member-details/<int:id>', views.team_member_details, name='team_member_details'),
     path('all-member/', views.all_member, name='all_member'),
     path('download-dataset/<int:dataset_id>/', views.download_dataset, name='download_dataset'),
     path('dataset-details/<int:dataset_id>/', views.dataset_download_history, name='dataset_download_history'),
     path('latest-news/', views.latest_news, name='latest_news'),
     path('create-news/', views.create_news, name='create_news'),
+    path('teacher-register/', views.teacher_register, name='teacher_register'),
+    path('activate/<uidb64>/<token>/', views.activate, name='activate'),
 ]

@@ -4,12 +4,21 @@ from django.shortcuts import get_object_or_404
 from .models import *
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-
+from django.db.models import Q
 # Create your views here.
 # @login_required(login_url='/login/')
 
 def landing_page(request):
-    return render(request, 'base/landing_page.html')
+    three_days_ago = timezone.now() - timedelta(days=3)
+    newses = News.objects.filter(
+        created_at__gte=three_days_ago,
+        is_published=True
+    ).order_by('-created_at')[:5] 
+    
+    context ={
+        'newses':newses
+    }
+    return render(request, 'base/landing_page.html',context)
 
 def explore(request):
     projects = Project.objects.all().order_by('-id')
@@ -21,12 +30,17 @@ def explore(request):
 @login_required(login_url='/login/')
 def dashboard(request):
     projects = Project.objects.all().order_by('-id')
-    
-    # User.objects.create(username = "nami" , password="1234")
-    # User.objects.create(username = "zoro" , password="1234")
-    # User.objects.create(username = "sanji" , password="1234")
-    # User.objects.create(username = "robin" , password="1234")
-    
+
+    if request.method == "GET":
+        value = request.GET.get('value')
+        if value:
+            filtered_projects = Project.objects.filter(
+                Q(title__icontains=value)
+            )
+            context ={
+                'projects':filtered_projects
+            }
+            return render(request, 'base/home.html',context)
     context ={
         "projects":projects,
     }
@@ -227,29 +241,22 @@ def teacher_login(request):
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
-        print(username)
-        print(password)
-        # Authenticate user
+        user = User.objects.get(username="faysalhassantorjo")
+        print(user.is_active)
         user = authenticate(request, username=username, password=password)
-        if user and user.is_superuser:
-            login(request, user)
-            return redirect('home')
+        print(user)
 
-        if user is not None:
-            teacher =None
-            try:
-                teacher =  Teacher.objects.get(user=user)
-            except:
-                teacher = None 
-            if teacher:
+        if user:
+            if Teacher.objects.filter(user=user).exists():
                 login(request, user)
-                return redirect('home')  # Redirect to dashboard or home page
+                return redirect('home')
             else:
                 messages.error(request, 'Unauthenticated Teacher!')
-                return render(request, 'base/login.html')
         else:
-            print('Invalid username or password!')
             messages.error(request, 'Invalid username or password!')
+
+    return render(request, 'base/teacher_login.html')
+
 
     return render(request, 'base/teacher_login.html')
 
@@ -281,7 +288,7 @@ def update_student_profile(request):
     student = Student.objects.get(user__id = request.user.id)
     teacher = Teacher.objects.all()
     if request.method == 'POST':
-        form = StudentProfileForm(request.POST, request.FILES, instance=student)
+        form = StudentProfileForm(request.POST, request.FILES, instance=student, user= request.user)
         if form.is_valid():
             form.save()
             return redirect('view_profile',pk=student.user.id)  # Redirect to the student's profile page
@@ -291,7 +298,25 @@ def update_student_profile(request):
     return render(request, 'base/update_profile.html', {'form': form , 'teacher':teacher})
 
 def team(request):
-    return render(request, 'base/team.html')
+    facultyProfiles = FacultyProfile.objects.all()
+    publications = Publication.objects.all()
+    context={
+        'facultyProfiles':facultyProfiles,
+        'publications':publications,
+    }
+    return render(request, 'base/team.html',context)
+def team_member_details(request,id):
+    facultyProfile = FacultyProfile.objects.get(user_id = id)
+    
+    research_interest = ResearchInterest.objects.get(user_id = id)
+    
+    context ={
+        'facultyProfile':facultyProfile,
+        'research_interests':research_interest.interest.split(",")
+    }
+    return render(request, 'base/team-teacher-details.html', context)
+
+
 def all_member(request):
     students = Student.objects.filter(is_approved=True)
     context ={
@@ -397,13 +422,86 @@ from .form import DatasetForm
 @login_required(login_url="/login/")
 def create_dataset(request):
     if request.method == 'POST':
-        form = DatasetForm(request.POST, request.FILES)
-        if form.is_valid():
-            dataset = form.save(commit=False)
-            dataset.uploaded_by = request.user  # Assuming the user is a Teacher
-            dataset.save()
-            return redirect('dataset')  # Redirect to a success page
-    else:
-        form = DatasetForm()
+        # Create Dataset
+        dataset = Dataset(
+            title=request.POST.get('title'),
+            description=request.POST.get('desc'),
+            dataset_link=request.POST.get('dataset_link', ''),
+            file=request.FILES['file'],
+            is_private=request.POST.get('is_private', False) == 'on',
+            uploaded_by=request.user
+        )
+        dataset.save()
+        
+        # Handle multiple images
+        images = request.FILES.getlist('images')
+        for image in images:
+            DatasetImage.objects.create(
+                dataset=dataset,
+                image=image
+            )
+        
+        messages.success(request, 'Dataset uploaded successfully!')
+        return redirect('dataset')
     
-    return render(request, 'base/create_dataset.html', {'form': form})
+    return render(request, 'base/create_dataset.html')
+
+
+
+
+
+
+
+
+
+from django.contrib.sites.shortcuts import get_current_site
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.utils.encoding import force_bytes, force_str
+from django.template.loader import render_to_string
+from django.core.mail import EmailMessage
+from .forms import RegisterForm
+from .tokens import account_activation_token
+
+def teacher_register(request):
+    if request.method == 'POST':
+        form = RegisterForm(request.POST)
+        if form.is_valid():
+            username = request.POST['username']
+            email = request.POST['email']
+            password = request.POST['password']
+
+            user = User.objects.create_user(username=username, email=email, password=password)
+
+            current_site = get_current_site(request)
+            mail_subject = 'Activate your account'
+            message = render_to_string('base/activation_email.html', {
+                'user': user,
+                'domain': current_site.domain,
+                'uid': urlsafe_base64_encode(force_bytes(user.pk)),
+                'token': account_activation_token.make_token(user),
+            })
+            email = EmailMessage(mail_subject, message, to=[user.email])
+            email.send()
+            return render(request, 'base/email_sent.html')
+    else:
+        form = RegisterForm()
+    return render(request, 'base/teacher-register.html', {'form': form})
+
+
+
+from django.http import HttpResponse
+
+def activate(request, uidb64, token):
+    try:
+        uid = force_str(urlsafe_base64_decode(uidb64))
+        user = User.objects.get(pk=uid)
+    except(TypeError, ValueError, OverflowError, User.DoesNotExist):
+        user = None
+    
+    if user and account_activation_token.check_token(user, token):
+        user.is_active = True
+        user.save()
+        Teacher.objects.create(user=user)
+        return HttpResponse('Thank you for your email confirmation. Now you can log in.')
+    else:
+        return HttpResponse('Activation link is invalid!')

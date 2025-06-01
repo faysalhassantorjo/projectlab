@@ -1,75 +1,156 @@
 {% extends 'base/main.html' %}
-{% load static %}
-
 {% block content %}
 
+<!-- Main Layout -->
+<main class="dashboard-container">
+  <div class="container-fluid">
 
-<!--Main layout-->
-<main style="margin-top: 58px;">
-  <div class="container mt-4">
-    <div class="row">
+    <!-- Header Section -->
+    <div class="dashboard-header mb-5 text-center align-items-center" style="margin: auto;">
+      <h1 class="display-5 fw-bold">Research Projects</h1>
+      <p class="lead text-muted">Explore ongoing and completed research initiatives</p>
+      <form action="" method="get">
+        <div class="d-flex justify-content-center mt-3">
+          <div class="search-bar d-flex align-items-center">
+            <i class="fas fa-search me-2"></i>
+            <input type="text" name="value" placeholder="Search projects..." class="search-input form-control">
+          </div>
+        </div>
+      </form>
+
+    </div>
+
+    <!-- Filter Controls -->
+    <!-- <div class="filter-controls mb-4">
+      <div class="filter-tags">
+        <span class="filter-tag active">All Projects</span>
+        <span class="filter-tag">Ongoing</span>
+        <span class="filter-tag">Completed</span>
+        <span class="filter-tag">My Projects</span>
+      </div>
+    </div> -->
+
+    <!-- Projects Grid -->
+    <div class="row g-4">
       {% for project in projects %}
-      <div class="col-lg-6 mb-4">
+      <div class="col-lg-6 col-md-6">
 
-        <div class="card position-relative hover-overlay ripple shadow-2-strong rounded-5 bg-dark"
-          style="height: 400px; overflow: hidden;">
-          <!-- Card Image -->
-          <img src="{{project.imageURL}}" class="card-img-top h-100 object-fit-cover" style="opacity: .7;" alt="Project Cover">
+        <!-- Project Card -->
+        <div class="research-project-card">
 
-          <!-- Overlay Content -->
-          <div class="card-img-overlay d-flex flex-column justify-content-between">
-
-            <!-- Top Section - Creator Info & Actions -->
-            <div class="d-flex justify-content-between align-items-start">
-              <!-- Creator Info -->
-              <a href="{% url 'teacher_profile' pk=project.advisor.id %}">
-                <div class="d-flex align-items-center p-2 rounded-3 blur" >
-                  <img src="{{project.advisor.imageURL}}" class="rounded-circle me-2" width="32" height="32"
-                    alt="Creator">
-                  <div>
-                    <p class="mb-0 small fw-bold text-capitalize text-light">{{project.advisor.user}}</p>
-                    <p class="mb-0 time small">2 hours ago</p>
-                  </div>
+          <!-- Project Header with Image and Status -->
+          <div class="project-header">
+            <div class="project-image-container">
+              <img src="{{project.imageURL}}" alt="{{project.title}}" class="project-image">
+              <div class="project-overlay">
+                <div class="status-indicator {% cycle 'status-planning' 'status-progress' 'status-completed' %}">
+                  <div class="status-dot"></div>
+                  <span class="status-text">{% cycle 'Planning' 'In Progress' 'Completed' %}</span>
                 </div>
-              </a>
-              <!-- Action Buttons -->
-              <!-- <div class="btn-group blur">
-                <button class="btn btn-sm px-2 py-1">
-                  <i class="fas fa-heart text-danger"></i>
-                </button>
-                <button class="btn btn-sm px-2 py-1" data-project_id="{{ project.id }}" style="z-index: 9;"
-                  onclick="window.location='/update-project/' + this.getAttribute('data-project_id')">
-                  <i class="fas fa-edit text-primary"></i>
-                </button>
-
-                <button class="btn btn-sm px-2 py-1">
-                  <i class="fas fa-trash text-danger"></i>
-                </button>
-              </div> -->
-            </div>
-
-            <!-- Bottom Section - Card Content -->
-            <a href="{% url 'project_detail' pk=project.id %}">
-              <div class="p-3 rounded-4 blur">
-                <h5 class="card-title text-white mb-2">{{project.title}}</h5>
-                <p class="card-text text-white-80 small mb-3 text-secondary">
-                  {{project.description|truncatechars:100}}
-                </p>
-
-                <div class="d-flex align-items-center">
-                  <h6 class="text-white mb-0 me-2 small">Team</h6>
-                  <div class="d-flex">
-
-                    {% for assigned_stu in project.students.all %}
-
-                    <img src="{{assigned_stu.imageURL}}" class="rounded-circle me-2" width="30" height="30"
-                      alt="{{assigned_stu.imageURL}}">
-                    {% endfor %}
-
+                <div class="project-actions">
+                  <div class="dropdown">
+                    <button class="action-btn" data-bs-toggle="dropdown">
+                      <i class="fas fa-ellipsis-h"></i>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                      <li><a class="dropdown-item" href="{% url 'project_detail' pk=project.id %}">
+                          <i class="fas fa-eye me-2"></i>View Details</a></li>
+                      <li><a class="dropdown-item">
+                          <i></i>Save</a></li>
+                      <li>
+                        <hr class="dropdown-divider">
+                      </li>
+                      <!-- <li><a class="dropdown-item text-danger" href="#">
+                          <i class="fas fa-trash me-2"></i>Delete Project</a></li> -->
+                    </ul>
                   </div>
                 </div>
               </div>
-            </a>
+            </div>
+          </div>
+
+          <!-- Project Content -->
+          <div class="project-content">
+            <div class="project-title-section">
+              <h3 class="project-title">{{project.title}}</h3>
+              <p class="project-description">{{project.description|truncatechars:120}}</p>
+            </div>
+
+            <!-- Project Metrics -->
+            <div class="project-metrics">
+              <div class="metric-card">
+                <div class="metric-icon">
+                  <i class="fas fa-calendar-check"></i>
+                </div>
+                <div class="metric-info">
+                  <span class="metric-label">Created At</span>
+                  <!-- <span class="metric-value">{% now "M d, Y" %}</span> -->
+                  <span class="metric-value">{{project.created_at}}</span>
+                </div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-icon">
+                  <i class="fas fa-tasks"></i>
+                </div>
+                <div class="metric-info">
+                  <span class="metric-label">Progress</span>
+                  <span class="metric-value">{% cycle '3' '5' '2' %}/5 Tasks</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Research Team Section -->
+            <div class="research-team">
+              <div class="team-header">
+                <h4 class="team-title">
+                  <i class="fas fa-users-cog me-2"></i>Research Team
+                </h4>
+              </div>
+
+              <div class="d-flex justify-content-between">
+
+                <!-- Advisor Section -->
+                <div class="advisor-section">
+                  <div class="role-badge advisor-badge">
+                    <i class="fas fa-user-graduate"></i>
+                    <span>Research Advisor</span>
+                  </div>
+                  <div class="member-info">
+                    <img src="{{project.advisor.imageURL}}" alt="{{project.advisor.user}}"
+                      class="member-avatar advisor-avatar">
+                    <div class="member-details">
+                      <span class="member-name">{{project.advisor.user}}</span>
+                      <span class="member-title">{{project.advisor.user.email}}</span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Students Section -->
+                <div class="students-section">
+                  <div class="role-badge students-badge">
+                    <i class="fas fa-user-friends"></i>
+                    <span>Research Students</span>
+                  </div>
+                  <div class="students-grid">
+                    {% for student in project.students.all %}
+                    <div class="student-member">
+                      <img src="{{student.imageURL}}" alt="{{student.user}}" class="member-avatar student-avatar">
+                      <!-- <span class="student-name">{{student.user.username}}</span> -->
+                    </div>
+                    {% endfor %}
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+            <!-- Action Footer -->
+            <div class="project-footer">
+              <a href="{% url 'project_detail' pk=project.id %}" class="view-details-btn">
+                <i class="fas fa-arrow-right me-2"></i>
+                View Project Details
+              </a>
+            </div>
           </div>
         </div>
 
@@ -77,9 +158,472 @@
       {% endfor %}
     </div>
 
+    <!-- Pagination -->
+    <!-- <nav class="mt-5">
+      <ul class="pagination justify-content-center">
+        <li class="page-item disabled">
+          <a class="page-link" href="#" tabindex="-1">Previous</a>
+        </li>
+        <li class="page-item active"><a class="page-link" href="#">1</a></li>
+        <li class="page-item"><a class="page-link" href="#">2</a></li>
+        <li class="page-item"><a class="page-link" href="#">3</a></li>
+        <li class="page-item">
+          <a class="page-link" href="#">Next</a>
+        </li>
+      </ul>
+    </nav> -->
+
   </div>
 </main>
-<!--Main layout-->
 
-<!-- MDB -->
+<style>
+  /* Dashboard Styles */
+  .dashboard-container {
+    min-height: 100vh;
+    padding: 2rem 0;
+  }
+
+  .dashboard-header {
+    color: white;
+  }
+
+  .dashboard-header h1 {
+    color: rgb(40, 40, 40);
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+  }
+
+  .dashboard-header .lead {
+    color: rgba(255, 255, 255, 0.9);
+  }
+
+  .search-bar {
+    position: relative;
+    flex-grow: 1;
+    max-width: 400px;
+  }
+
+  .search-bar i {
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #6c757d;
+    z-index: 2;
+  }
+
+  .search-input {
+    width: 100%;
+    padding: 12px 15px 12px 40px;
+    border: none;
+    border-radius: 25px;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    transition: all 0.3s;
+    font-size: 0.95rem;
+  }
+
+  .search-input:focus {
+    outline: none;
+    background: white;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    transform: translateY(-2px);
+  }
+
+  /* Filter Controls */
+  .filter-controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-bottom: 2rem;
+  }
+
+  .filter-tags {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+  }
+
+  .filter-tag {
+    padding: 8px 20px;
+    background: rgba(103, 103, 103, 0.2);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 25px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.3s;
+    color: rgb(63, 63, 63);
+    font-weight: 500;
+  }
+
+  .filter-tag:hover,
+  .filter-tag.active {
+    background: rgba(255, 255, 255, 0.9);
+    color: #667eea;
+    border-color: rgba(255, 255, 255, 0.8);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  }
+
+  /* Research Project Card */
+  .research-project-card {
+    background: white;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    transition: all 0.4s ease;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+  }
+
+  .research-project-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+  }
+
+  /* Project Header */
+  .project-header {
+    position: relative;
+    height: 200px;
+    overflow: hidden;
+  }
+
+  .project-image-container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+  }
+
+  .project-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.6s ease;
+  }
+
+  .research-project-card:hover .project-image {
+    transform: scale(1.1);
+  }
+
+  .project-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.8) 0%, rgba(118, 75, 162, 0.8) 100%);
+    opacity: 0;
+    transition: all 0.3s ease;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 1rem;
+  }
+
+  .research-project-card:hover .project-overlay {
+    opacity: 1;
+  }
+
+  .status-indicator {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: rgba(255, 255, 255, 0.95);
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+  }
+
+  .status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+  }
+
+  .status-planning .status-dot {
+    background: #ffc107;
+  }
+
+  .status-progress .status-dot {
+    background: #28a745;
+  }
+
+  .status-completed .status-dot {
+    background: #007bff;
+  }
+
+  .status-planning {
+    color: #ffc107;
+  }
+
+  .status-progress {
+    color: #28a745;
+  }
+
+  .status-completed {
+    color: #007bff;
+  }
+
+  .project-actions .action-btn {
+    background: rgba(255, 255, 255, 0.9);
+    border: none;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s;
+    color: #667eea;
+  }
+
+  .action-btn:hover {
+    background: white;
+    transform: scale(1.1);
+  }
+
+  /* Project Content */
+  .project-content {
+    padding: 1.5rem;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .project-title-section {
+    margin-bottom: 1.5rem;
+  }
+
+  .project-title {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: #2c3e50;
+    margin-bottom: 0.75rem;
+    line-height: 1.3;
+  }
+
+  .project-description {
+    color: #6c757d;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    margin: 0;
+  }
+
+  /* Project Metrics */
+  .project-metrics {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .metric-card {
+    background: #f8f9ff;
+    border-radius: 12px;
+    padding: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    border: 1px solid rgba(102, 126, 234, 0.1);
+  }
+
+  .metric-icon {
+    width: 40px;
+    height: 40px;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1rem;
+  }
+
+  .metric-info {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .metric-label {
+    font-size: 0.75rem;
+    color: #6c757d;
+    font-weight: 500;
+  }
+
+  .metric-value {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #2c3e50;
+  }
+
+  /* Research Team */
+  .research-team {
+    background: #f8f9ff;
+    border-radius: 15px;
+    padding: 1.25rem;
+    margin-bottom: 1.5rem;
+    border: 1px solid rgba(102, 126, 234, 0.1);
+  }
+
+  .team-header {
+    margin-bottom: 1rem;
+  }
+
+  .team-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #2c3e50;
+    margin: 0;
+  }
+
+  .role-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    padding: 4px 10px;
+    border-radius: 15px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+  }
+
+  .advisor-section,
+  .students-section {
+    margin-bottom: 1rem;
+  }
+
+  .students-section:last-child {
+    margin-bottom: 0;
+  }
+
+  .member-info {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .member-avatar {
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid white;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+
+  .advisor-avatar {
+    width: 45px;
+    height: 45px;
+  }
+
+  .student-avatar {
+    width: 35px;
+    height: 35px;
+  }
+
+  .member-details {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .member-name {
+    font-weight: 600;
+    color: #2c3e50;
+    font-size: 0.95rem;
+  }
+
+  .member-title {
+    font-size: 0.8rem;
+    color: #6c757d;
+  }
+
+  .students-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+
+  .student-member {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    border-radius: 20px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  }
+
+  .student-name {
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: #2c3e50;
+  }
+
+  /* Project Footer */
+  .project-footer {
+    margin-top: auto;
+  }
+
+  .view-details-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    padding: 0.75rem;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    text-decoration: none;
+    border-radius: 12px;
+    font-weight: 600;
+    transition: all 0.3s;
+    font-size: 0.9rem;
+  }
+
+  .view-details-btn:hover {
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+  }
+
+  /* Responsive Design */
+  @media (max-width: 768px) {
+    .dashboard-container {
+      padding: 1rem 0;
+    }
+
+    .filter-controls {
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .project-metrics {
+      grid-template-columns: 1fr;
+      gap: 0.75rem;
+    }
+
+    .students-grid {
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .project-header {
+      height: 160px;
+    }
+  }
+
+  @media (max-width: 576px) {
+    .dashboard-header {
+      padding: 1.5rem 0;
+    }
+
+    .research-project-card {
+      margin-bottom: 1rem;
+    }
+  }
+</style>
+
 {% endblock %}

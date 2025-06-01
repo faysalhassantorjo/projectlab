@@ -110,11 +110,11 @@
                             <div class="card shadow-2 mb-4">
                                 <div class="card-body">
                                     <h5 class="mb-3"><i class="fas fa-chalkboard-teacher me-2"></i>Select Advisor</h5>
-                                    <div class="list-group" style="max-height: 200px; overflow-y: auto;">
+                                    <div class="list-group" style="max-height: 400px; overflow-y: auto;">
                                         {% for teacher in teachers %}
                                         <label class="list-group-item d-flex align-items-center">
                                             <input class="form-check-input me-3" type="radio" name="advisor"
-                                                value="{{ teacher.id }}" required {% if forloop.first %}checked{%endif%}>
+                                                value="{{ teacher.id }}" required {% if forloop.first%}checked{%endif%}>
                                             <div class="d-flex align-items-center">
                                                 <img src="{{ teacher.imageURL }}" class="rounded-circle me-3" width="40"
                                                     height="40" alt="{{ teacher.user.username }}">
@@ -242,14 +242,14 @@
                                                     name="students" value="{{ student.id }}"
                                                     id="student{{ student.id }}" data-name="{{ student.user.username }}"
                                                     data-image="{{ student.imageURL }}"
+                                                    data-email="{{ student.user.email }}"
                                                     onchange="updateSelection(this)">
                                             </div>
                                             <img src="{{ student.imageURL }}" class="rounded-circle me-3" width="45"
                                                 height="45" alt="{{ student.user.username }}">
                                             <div class="flex-grow-1">
-                                                <h6 class="mb-0 student-name">{{ student.user.username }}</h6>
-                                                <small class="text-muted">{{
-                                                    student.user.email|truncatechars:15}}</small>
+                                                <h6 class="mb-0 student-name">{{student.user.username }}</h6>
+                                                <small class="text-muted">{{ student.user.email }}</small>
                                             </div>
                                             <select class="form-select form-select-sm w-25"
                                                 name="roles_{{ student.id }}">
@@ -267,76 +267,175 @@
 
                     <script>
                         document.addEventListener('DOMContentLoaded', function () {
-                            // Initialize selection tracking
-                            let selectedStudents = new Set();
+                            // Configuration
+                            const MAX_SELECTIONS = 3;
+                            const DEFAULT_AVATAR = "{% static 'images/default-avatar.png' %}";
 
-                            // Update selection display
-                            function updatePreview() {
-                                const preview = document.getElementById('selected-preview');
-                                preview.innerHTML = '';
+                            // State management
+                            const selectedStudents = new Map();
+                            let searchTerm = '';
 
-                                selectedStudents.forEach(id => {
-                                    const student = document.querySelector(`input[value="${id}"]`);
-                                    const name = student.dataset.name;
-                                    const image = student.dataset.image;
+                            // DOM Elements
+                            const studentList = document.getElementById('student-list');
+                            const previewContainer = document.getElementById('selected-preview');
+                            const searchInput = document.getElementById('student-search');
 
-                                    console.log('User image: ', image)
+                            // Initialize the component
+                            function initStudentSelection() {
+                                updatePreview();
+                                setupEventListeners();
+                            }
 
-                                    preview.innerHTML += `
-                                    <div class="selected-student-badge position-relative">
-                                        <img src="${image}" 
-                                             class="rounded-circle border border-primary" 
-                                             width="40" 
-                                             height="40"
-                                             title="${name}">
-                                        <button type="button" 
-                                                class="btn-close position-absolute top-0 end-0"
-                                                onclick="removeStudent('${id}')"></button>
-                                    </div>
-                                `;
+                            // Set up all event listeners
+                            function setupEventListeners() {
+                                // Search functionality
+                                if (searchInput) {
+                                    searchInput.addEventListener('input', handleSearch);
+                                }
+
+                                // Checkbox change events (delegated)
+                                if (studentList) {
+                                    studentList.addEventListener('change', function (e) {
+                                        if (e.target.classList.contains('student-checkbox')) {
+                                            handleCheckboxChange(e.target);
+                                        }
+                                    });
+                                }
+                            }
+
+                            // Handle search input
+                            function handleSearch(e) {
+                                searchTerm = e.target.value.trim().toLowerCase();
+                                filterStudentCards();
+                            }
+
+                            // Filter student cards based on search term
+                            function filterStudentCards() {
+                                const cards = document.querySelectorAll('.student-card');
+
+                                cards.forEach(card => {
+                                    const name = card.querySelector('.student-name').textContent.toLowerCase();
+                                    const email = card.querySelector('small').textContent.toLowerCase();
+                                    const matchesSearch = !searchTerm ||
+                                        name.includes(searchTerm) ||
+                                        email.includes(searchTerm);
+
+                                    card.style.display = matchesSearch ? 'block' : 'none';
                                 });
                             }
 
-                            // Global function to handle selection
-                            window.updateSelection = function (checkbox) {
+                            // Handle checkbox changes
+                            function handleCheckboxChange(checkbox) {
+                                const studentId = checkbox.value;
+                                const studentData = {
+                                    name: checkbox.dataset.name || 'Unknown Student',
+                                    image: checkbox.dataset.image || DEFAULT_AVATAR,
+                                    email: checkbox.dataset.email || 'No email'
+                                };
+
                                 if (checkbox.checked) {
-                                    if (selectedStudents.size >= 3) {
+                                    if (selectedStudents.size > MAX_SELECTIONS) {
                                         checkbox.checked = false;
-                                        alert('Maximum 3 team members allowed');
+                                        showAlert(`Maximum ${MAX_SELECTIONS}  members allowed`, 'warning');
                                         return;
                                     }
-                                    console.log('Selected value', checkbox.value)
-                                    selectedStudents.add(checkbox.value);
+                                    selectedStudents.set(studentId, studentData);
                                 } else {
-                                    selectedStudents.delete(checkbox.value);
+                                    selectedStudents.delete(studentId);
                                 }
 
-                                // Update checkboxes state
-                                document.querySelectorAll('.student-checkbox').forEach(cb => {
-                                    cb.disabled = selectedStudents.size >= 3 && !cb.checked;
-                                });
-
+                                updateCheckboxStates();
                                 updatePreview();
-                            };
+                            }
 
-                            // Global function to remove student
-                            window.removeStudent = function (id) {
+                            // Update disabled state of checkboxes
+                            function updateCheckboxStates() {
+                                document.querySelectorAll('.student-checkbox').forEach(cb => {
+                                    cb.disabled = selectedStudents.size >= MAX_SELECTIONS && !cb.checked;
+                                });
+                            }
+
+                            // Update the preview display
+                            function updatePreview() {
+                                previewContainer.innerHTML = '';
+
+                                if (selectedStudents.size === 0) {
+                                    previewContainer.innerHTML = `
+                <div class="text-muted w-100 text-center py-2">
+                    No students selected yet (max ${MAX_SELECTIONS} allowed)
+                </div>
+            `;
+                                    return;
+                                }
+
+                                selectedStudents.forEach((studentData, id) => {
+                                    const badge = createStudentBadge(id, studentData);
+                                    previewContainer.appendChild(badge);
+                                });
+                            }
+
+                            // Create a student badge element
+                            function createStudentBadge(id, { name, image, email }) {
+                                const badge = document.createElement('div');
+                                badge.className = 'selected-student-badge position-relative bg-light rounded p-2 d-flex align-items-center';
+
+                                badge.innerHTML = `
+            <img src="${image}" 
+                 class="rounded-circle border border-primary me-2" 
+                 width="40" 
+                 height="40"
+                 onerror="this.src='${DEFAULT_AVATAR}'"
+                 alt="${name}">
+            <div class="d-inline-block align-middle flex-grow-1">
+                <div class="fw-bold text-truncate" style="max-width: 120px">${name}</div>
+                <small class="text-muted text-truncate d-block" style="max-width: 120px">${email}</small>
+            </div>
+            <button type="button" 
+                    class="btn-close btn-danger position-absolute top-0 end-0 p-1" style="color:red; text-align:center"
+                    aria-label="Remove ${name}">X</button>
+        `;
+
+                                // Add click handler to remove button
+                                const removeBtn = badge.querySelector('.btn-close');
+                                removeBtn.addEventListener('click', () => removeStudent(id));
+
+                                return badge;
+                            }
+
+                            // Remove a student from selection
+                            function removeStudent(id) {
                                 const checkbox = document.querySelector(`input[value="${id}"]`);
                                 if (checkbox) {
                                     checkbox.checked = false;
-                                    updateSelection(checkbox);
+                                    handleCheckboxChange(checkbox);
                                 }
-                            };
+                            }
 
-                            // Initialize search functionality
-                            const searchInput = document.getElementById('student-search');
-                            searchInput.addEventListener('input', function () {
-                                const term = this.value.trim().toLowerCase();
-                                document.querySelectorAll('.student-card').forEach(card => {
-                                    const name = card.querySelector('.student-name').textContent.toLowerCase();
-                                    card.style.display = name.includes(term) ? 'block' : 'none';
-                                });
-                            });
+                            // Show alert message
+                            function showAlert(message, type = 'danger') {
+                                const alertDiv = document.createElement('div');
+                                alertDiv.className = `alert alert-${type} alert-dismissible fade show position-fixed top-0 end-0 m-3`;
+                                alertDiv.style.zIndex = '1100';
+                                alertDiv.role = 'alert';
+                                alertDiv.innerHTML = `
+            ${message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        `;
+                                document.body.appendChild(alertDiv);
+
+                                // Auto dismiss after 3 seconds
+                                setTimeout(() => {
+                                    alertDiv.classList.remove('show');
+                                    setTimeout(() => alertDiv.remove(), 150);
+                                }, 3000);
+                            }
+
+                            // Initialize the component
+                            initStudentSelection();
+
+                            // Expose functions to global scope if needed
+                            window.updateSelection = handleCheckboxChange;
+                            window.removeStudent = removeStudent;
                         });
                     </script>
 

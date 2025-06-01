@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Dataset Download History</title>
-  
+
   <!-- Font Awesome -->
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
   <!-- Google Fonts -->
@@ -18,58 +19,71 @@
       background-color: #f5f5f5;
       font-family: 'Roboto', sans-serif;
     }
+
     .navbar {
       background-color: #fff;
       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     }
+
     .card {
       border-radius: 10px;
       box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     }
+
     .dataset-preview {
       background: #fff;
       padding: 20px;
       border-radius: 10px;
       box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     }
+
     .dataset-preview h4 {
       margin-bottom: 16px;
       font-weight: 600;
     }
+
     .table-responsive {
       border-radius: 10px;
       overflow: hidden;
       background: #fff;
       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     }
+
     .table-responsive table {
       margin-bottom: 0;
     }
+
     .table th {
       color: #343a40;
       text-transform: capitalize;
       font-weight: 500;
     }
+
     .table-hover tbody tr:hover {
       background-color: #f8f9fa;
     }
+
     .table-container {
       max-height: 500px;
       overflow-y: auto;
     }
+
     .pagination {
       justify-content: center;
       margin-top: 20px;
     }
+
     .pagination .page-item.active .page-link {
       background-color: #007bff;
       border-color: #007bff;
     }
+
     .pagination .page-link {
       color: #007bff;
     }
   </style>
 </head>
+
 <body>
 
   <!-- Navbar -->
@@ -81,22 +95,26 @@
 
   <!-- Main Content -->
   <div class="container my-5">
-    
+
     <h2 class="text-center mb-4 fw-bold">Dataset Download History</h2>
-    
+
     <div class="row">
       <!-- Dataset Details -->
       <div class="col-md-6">
         <div class="card p-3">
           <h4 class="fw-bold">{{ dataset.title }}</h4>
-          <p class="text-muted">Uploaded by 
+
+          <p>{{dataset.description}}</p>
+
+          <p class="text-muted">Uploaded by
             {% if dataset.uploaded_by.student_profile %}
             <b><a href="{% url 'view_profile' dataset.uploaded_by.id %}">{{ dataset.uploaded_by }}</a></b>
-            {% endif  %}
+            {% endif %}
             {% if dataset.uploaded_by.teacher_profile %}
             <b><a href="{% url 'teacher_profile' dataset.uploaded_by.id %}">{{ dataset.uploaded_by }}</a></b>
-            {% endif  %}
-             on <b>{{ dataset.uploaded_at }}</b></p>
+            {% endif %}
+            on <b>{{ dataset.uploaded_at }}</b>
+          </p>
           <ul class="list-group list-group-flush">
             <li class="list-group-item">
               <i class="fas fa-download me-2"></i>
@@ -108,11 +126,11 @@
             </li>
             <li class="list-group-item">
               <i class="fas fa-link me-2"></i>
-              <strong>Dataset Link:</strong> 
+              <strong>Dataset Link:</strong>
               {% if dataset.dataset_link %}
-                <a href="{{ dataset.dataset_link }}" target="_blank">{{ dataset.dataset_link }}</a>
+              <a href="{{ dataset.dataset_link }}" target="_blank">{{ dataset.dataset_link }}</a>
               {% else %}
-                Not available
+              Not available
               {% endif %}
             </li>
           </ul>
@@ -124,73 +142,113 @@
         <div class="card p-3">
           <h4 class="fw-bold">Projects Using This Dataset</h4>
           {% if projects %}
-            <ul class="list-group list-group-flush">
-              {% for project in projects %}
-              <li class="list-group-item">
-                <a href="{% url 'project_detail' project.id %}" class="fw-bold">{{ project.title }}</a>
-                <small class="text-muted">(Created on {{ project.created_at }})</small>
-              </li>
-              {% endfor %}
-            </ul>
+          <ul class="list-group list-group-flush">
+            {% for project in projects %}
+            <li class="list-group-item">
+              <a href="{% url 'project_detail' project.id %}" class="fw-bold">{{ project.title }}</a>
+              <small class="text-muted">(Created on {{ project.created_at }})</small>
+            </li>
+            {% endfor %}
+          </ul>
           {% else %}
-            <p class="text-muted">No projects are using this dataset.</p>
+          <p class="text-muted">No projects are using this dataset.</p>
           {% endif %}
         </div>
       </div>
     </div>
 
     <!-- Download History -->
+     {% if request.user.is_superuser %}
     <div class="card p-3 my-4">
       <h4 class="fw-bold">Download History</h4>
       {% if download_history %}
-        <div class="table-responsive">
-          <table class="table table-hover table-striped">
-            <thead>
-              <tr>
-                <th>Name</th>
-                <th>Email</th>
-                <th>University</th>
-                <th>Downloaded At</th>
-              </tr>
-            </thead>
-            <tbody>
-              {% for history in download_history %}
-              <tr>
-                <td>{{ history.username }}</td>
-                <td>{{ history.gmail }}</td>
-                <td>{{ history.university|default:"Not provided" }}</td>
-                <td>{{ history.downloaded_at }}</td>
-              </tr>
-              {% endfor %}
-            </tbody>
-          </table>
-        </div>
+      <div class="table-responsive">
+        <table class="table table-hover table-striped">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Email</th>
+              <th>University</th>
+              <th>Downloaded At</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for history in download_history %}
+            <tr>
+              <td>{{ history.username }}</td>
+              <td>{{ history.gmail }}</td>
+              <td>{{ history.university|default:"Not provided" }}</td>
+              <td>{{ history.downloaded_at }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
       {% else %}
-        <p class="text-muted">No download history available.</p>
+      <p class="text-muted">No download history available.</p>
       {% endif %}
     </div>
+    {% endif %}
 
     <!-- Dataset Preview -->
-    <div class="dataset-preview">
+    {% if dataset.preview_images.all %}
+    <div class="dataset-preview mt-3">
+      <h4 class="fw-bold">Preview Images</h4>
+      <p class="text-muted">Showing {{ dataset.preview_images.count }} image{{ dataset.preview_images.count|pluralize}}.</p>
+
+      <div class="grid-preview">
+        {% for image in dataset.preview_images.all %}
+        <div class="grid-item">
+          <img src="{{ image.image.url }}" class="grid-thumbnail" alt="Dataset preview">
+        </div>
+        {% empty %}
+        <p class="no-images">No preview images available.</p>
+        {% endfor %}
+      </div>
+    </div>
+
+    <style>
+      .grid-preview {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+        gap: 10px;
+        margin-top: 15px;
+      }
+
+      .grid-item {
+        aspect-ratio: 1/1;
+      }
+
+      .grid-thumbnail {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+      }
+    </style>
+    {% endif %}
+
+    <div class="dataset-preview mt-3">
       <h4 class="fw-bold">Dataset Preview</h4>
       <p class="text-muted">Showing the first 100 rows of the dataset.</p>
       <div class="table-responsive">
         <div class="table-container">
-          <table class="table table-hover table-bordered text-center" >
+          <table class="table table-hover table-bordered text-center">
             <thead class="table">
               <tr>
                 {% for header in headers %}
-                  <th>{{ header }}</th>
+                <th>{{ header }}</th>
                 {% endfor %}
               </tr>
             </thead>
             <tbody>
               {% for row in csv_data %}
-                <tr>
-                  {% for cell in row %}
-                    <td style="font-size: 12px; ">{{ cell }}</td>
-                  {% endfor %}
-                </tr>
+              <tr>
+                {% for cell in row %}
+                <td style="font-size: 12px; ">{{ cell }}</td>
+                {% endfor %}
+              </tr>
               {% endfor %}
             </tbody>
           </table>
@@ -223,4 +281,5 @@
   <!-- MDB JS -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.0/mdb.min.js"></script>
 </body>
+
 </html>

@@ -74,12 +74,23 @@ WSGI_APPLICATION = 'projectlab.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
+#     }
+# }
+
+import dj_database_url
+
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
+    'default': dj_database_url.parse(
+        'postgresql://neondb_owner:npg_AcKkfgz2o0UB@ep-soft-wildflower-a1nomy7h-pooler.ap-southeast-1.aws.neon.tech/neondb?sslmode=require',
+        conn_max_age=600,
+        ssl_require=True,
+    )
 }
+
 CSRF_TRUSTED_ORIGINS = [
 "https://projectlab-jix0.onrender.com/"
 ]
@@ -130,3 +141,12 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'torjo15-5926@diu.edu.bd'
+EMAIL_HOST_PASSWORD = 'tbmt twii qyob lxzx'
