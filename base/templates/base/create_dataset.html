@@ -11,28 +11,44 @@
             <div class="card-header">Dataset Information</div>
             <div class="card-body">
                 <div class="form-group">
-                    <label for="id_title">Title*</label>
-                    <input type="text" class="form-control" id="id_title" name="title" maxlength="200" required>
+                    <label for="{{ form.title.id_for_label }}">Title*</label>
+                    {{ form.title }}
+                    {% if form.title.errors %}
+                        <div class="text-danger">{{ form.title.errors }}</div>
+                    {% endif %}
                 </div>
 
+                <!-- CKEditor 5 textarea -->
                 <div class="form-group">
-                    <label for="id_desc">Description*</label>
-                    <textarea type="text" rows="3" class="form-control" id="id_desc" name="desc" required></textarea>
+                    <label for="{{ form.description.id_for_label }}">Description*</label>
+                    {{ form.description }}
+                    {% if form.description.errors %}
+                        <div class="text-danger">{{ form.description.errors }}</div>
+                    {% endif %}
                 </div>
                 
                 <div class="form-group">
-                    <label for="id_dataset_link">Dataset Link (optional)</label>
-                    <input type="url" class="form-control" id="id_dataset_link" name="dataset_link">
+                    <label for="{{ form.dataset_link.id_for_label }}">Dataset Link (optional)</label>
+                    {{ form.dataset_link }}
+                    {% if form.dataset_link.errors %}
+                        <div class="text-danger">{{ form.dataset_link.errors }}</div>
+                    {% endif %}
                 </div>
                 
                 <div class="form-group">
-                    <label for="id_file">Dataset File*</label>
-                    <input type="file" class="form-control-file" id="id_file" name="file" required>
+                    <label for="{{ form.file.id_for_label }}">Dataset File*</label>
+                    {{ form.file }}
+                    {% if form.file.errors %}
+                        <div class="text-danger">{{ form.file.errors }}</div>
+                    {% endif %}
                 </div>
                 
                 <div class="form-check">
-                    <input type="checkbox" class="form-check-input" id="id_is_private" name="is_private">
-                    <label class="form-check-label" for="id_is_private">Make this dataset private</label>
+                    {{ form.is_private }}
+                    <label class="form-check-label" for="{{ form.is_private.id_for_label }}">Make this dataset private</label>
+                    {% if form.is_private.errors %}
+                        <div class="text-danger">{{ form.is_private.errors }}</div>
+                    {% endif %}
                 </div>
             </div>
         </div>
@@ -55,8 +71,8 @@
     </form>
 </div>
 
+<!-- JavaScript for image uploads -->
 <script>
-    // JavaScript to handle adding more image fields
     document.getElementById('add-image-btn').addEventListener('click', function() {
         const container = document.getElementById('image-upload-section');
         const count = container.querySelectorAll('.image-upload-group').length + 1;
@@ -71,4 +87,7 @@
         container.appendChild(newGroup);
     });
 </script>
+
+<!-- CKEditor 5 Media -->
+{{ form.media }}
 {% endblock %}

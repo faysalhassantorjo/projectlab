@@ -419,33 +419,31 @@ def create_news(request):
 
 # create_dataset
 from .form import DatasetForm
+from django_ckeditor_5.widgets import CKEditor5Widget
+
 @login_required(login_url="/login/")
 def create_dataset(request):
     if request.method == 'POST':
-        # Create Dataset
-        dataset = Dataset(
-            title=request.POST.get('title'),
-            description=request.POST.get('desc'),
-            dataset_link=request.POST.get('dataset_link', ''),
-            file=request.FILES['file'],
-            is_private=request.POST.get('is_private', False) == 'on',
-            uploaded_by=request.user
-        )
-        dataset.save()
-        
-        # Handle multiple images
-        images = request.FILES.getlist('images')
-        for image in images:
-            DatasetImage.objects.create(
-                dataset=dataset,
-                image=image
-            )
-        
-        messages.success(request, 'Dataset uploaded successfully!')
-        return redirect('dataset')
+        form = DatasetForm(request.POST, request.FILES)
+        if form.is_valid():
+            dataset = form.save(commit=False)
+            dataset.uploaded_by = request.user
+            dataset.save()
+            
+            # Handle multiple images
+            images = request.FILES.getlist('images')
+            for image in images:
+                DatasetImage.objects.create(
+                    dataset=dataset,
+                    image=image
+                )
+            
+            messages.success(request, 'Dataset uploaded successfully!')
+            return redirect('dataset')
+    else:
+        form = DatasetForm()
     
-    return render(request, 'base/create_dataset.html')
-
+    return render(request, 'base/create_dataset.html', {'form': form})
 
 
 

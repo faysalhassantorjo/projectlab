@@ -1,6 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
+from django_ckeditor_5.fields import CKEditor5Field
+
 
 # Create your models here.
 
@@ -51,11 +53,10 @@ class Category(models.Model):
         return self.title
 
 
-
 class Dataset(models.Model):
     title = models.CharField(max_length=200)
-    description = models.TextField(null=True, blank=True)
-    dataset_link  = models.URLField(blank=True)
+    description = CKEditor5Field('Description', config_name='default', null=True, blank=True)  #     dataset_link  = models.URLField(blank=True)
+    dataset_link = models.URLField(null=True, blank=True)
     file = models.FileField(upload_to='dataset-file')
     is_private = models.BooleanField(default=False)
     uploaded_by = models.ForeignKey(User, on_delete=models.CASCADE,related_name="uploaded_dataset")
@@ -139,7 +140,7 @@ class News(models.Model):
     ('general', 'General'),)
 
     title = models.CharField(max_length=200)
-    content = models.TextField()
+    content = CKEditor5Field(config_name='default', null=True, blank=True)
     author = models.ForeignKey(Teacher, on_delete=models.CASCADE, related_name="news_articles")
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

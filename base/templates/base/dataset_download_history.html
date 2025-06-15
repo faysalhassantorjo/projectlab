@@ -82,6 +82,8 @@
       color: #007bff;
     }
   </style>
+
+  
 </head>
 
 <body>
@@ -96,15 +98,15 @@
   <!-- Main Content -->
   <div class="container my-5">
 
-    <h2 class="text-center mb-4 fw-bold">Dataset Download History</h2>
+    <h2 class="text-center mb-4 fw-bold">Dataset Details</h2>
 
     <div class="row">
       <!-- Dataset Details -->
-      <div class="col-md-6">
+      <div class="col-md-12">
         <div class="card p-3">
           <h4 class="fw-bold">{{ dataset.title }}</h4>
 
-          <p>{{dataset.description}}</p>
+          <p>{{dataset.description|safe}}</p>
 
           <p class="text-muted">Uploaded by
             {% if dataset.uploaded_by.student_profile %}
@@ -138,7 +140,7 @@
       </div>
 
       <!-- Projects Using This Dataset -->
-      <div class="col-md-6">
+      <div class="col-md-12 mt-4">
         <div class="card p-3">
           <h4 class="fw-bold">Projects Using This Dataset</h4>
           {% if projects %}
@@ -159,7 +161,7 @@
 
     <!-- Download History -->
      {% if request.user.is_superuser %}
-    <div class="card p-3 my-4">
+    <div class="card p-3 my-4 mt-4">
       <h4 class="fw-bold">Download History</h4>
       {% if download_history %}
       <div class="table-responsive">

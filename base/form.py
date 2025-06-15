@@ -118,10 +118,24 @@ class NewsForm(forms.ModelForm):
 from django.forms import inlineformset_factory
 from .models import Dataset, DatasetImage
 
+from .models import Dataset
+from django_ckeditor_5.widgets import CKEditor5Widget
+
 class DatasetForm(forms.ModelForm):
     class Meta:
         model = Dataset
-        fields = ['title', 'dataset_link', 'file', 'is_private']
+        fields = ['title', 'description', 'dataset_link', 'file', 'is_private']
+        widgets = {
+            'description': CKEditor5Widget(
+                attrs={"class": "django_ckeditor_5"},
+                config_name='default'
+            ),
+            'title': forms.TextInput(attrs={'class': 'form-control'}),
+            'dataset_link': forms.URLInput(attrs={'class': 'form-control'}),
+            'file': forms.FileInput(attrs={'class': 'form-control-file'}),
+            'is_private': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+        }
+
 
 # DatasetImageFormSet = inlineformset_factory(
 #     Dataset,

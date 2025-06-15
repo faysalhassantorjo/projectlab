@@ -267,7 +267,7 @@
           <div class="card-body">
             <h5 class="dataset-title">{{ dataset.title }}</h5>
             <p class="dataset-description">
-              {{ dataset.description|default:"A collection of data for research and analysis."|truncatechars:120 }}
+              {{ dataset.description|striptags|truncatechars:120 }}
             </p>
 
             <!-- Metadata -->
