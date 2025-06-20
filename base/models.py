@@ -2,7 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
 from django_ckeditor_5.fields import CKEditor5Field
-
+from cloudinary.models import CloudinaryField
 
 # Create your models here.
 
@@ -11,12 +11,13 @@ class Student(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="student_profile")
     about = models.TextField(null=True)
     phone = models.CharField(null=True, max_length=11)
-    profile_picture = models.ImageField(upload_to="student-images/", blank=True)
+    # profile_picture = models.ImageField(upload_to="student-images/", blank=True)
+    profile_picture = CloudinaryField("student-profile", folder="student_profile", blank=True, null=True)
     is_approved = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True, null=True)
     skills = models.CharField(max_length=255, blank=True, help_text="Comma-separated list of skills")
     
-    cv = models.FileField(upload_to='students-cv', null=True, blank=True)
+    cv =CloudinaryField("students-cv", folder="student_cv", blank=True, null=True, resource_type='raw',)
     google_scholar_profile = models.URLField(blank=True, null=True)
     linkin_profile = models.URLField(blank=True, null=True)
     github_profile = models.URLField(blank=True, null=True)
@@ -34,7 +35,8 @@ class Student(models.Model):
 
 class Teacher(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="teacher_profile")
-    profile_picture = models.ImageField(upload_to="teacher-profile/", blank=True)
+    profile_picture = CloudinaryField("teacher-profile", folder ="teacher_profile", blank=True, null=True)
+    
     about = models.TextField(null=True)
     
     def imageURL(self):
@@ -57,7 +59,7 @@ class Dataset(models.Model):
     title = models.CharField(max_length=200)
     description = CKEditor5Field('Description', config_name='default', null=True, blank=True)  #     dataset_link  = models.URLField(blank=True)
     dataset_link = models.URLField(null=True, blank=True)
-    file = models.FileField(upload_to='dataset-file')
+    file = CloudinaryField("dataset-file", folder="datasets", blank=True, null=True,resource_type='raw')
     is_private = models.BooleanField(default=False)
     uploaded_by = models.ForeignKey(User, on_delete=models.CASCADE,related_name="uploaded_dataset")
     uploaded_at = models.DateTimeField(auto_now_add=True)
@@ -65,7 +67,7 @@ class Dataset(models.Model):
 
 class DatasetImage(models.Model):
     dataset = models.ForeignKey(Dataset, on_delete=models.CASCADE, related_name='preview_images')
-    image = models.ImageField(upload_to='dataset-previews/')
+    image = CloudinaryField("dataset-preview",folder="dataset-preview-image", blank=True, null=True)
     uploaded_at = models.DateTimeField(auto_now_add=True)
 
     
@@ -98,7 +100,7 @@ class Project(models.Model):
     description = models.TextField()
     students = models.ManyToManyField(Student, through=project_studnet, related_name="assigned_students")
     advisor = models.ForeignKey(Teacher, on_delete=models.CASCADE, related_name='project_advisor')
-    project_picture = models.ImageField(upload_to="project-images/", blank=True)
+    project_picture = CloudinaryField("project-picture", folder="project-banner", blank=True, null=True)
     objectives = models.TextField(blank=True)
     hypothesis = models.TextField(blank=True)
     publication_link = models.URLField(blank=True)
@@ -108,8 +110,8 @@ class Project(models.Model):
     tools_used = models.CharField(max_length=50, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     
-    project_file = models.FileField(upload_to='project-file/', null=True, blank=True)
     
+    project_file = CloudinaryField("project-file", folder="project-file",blank=True, null=True)
     
     STATUS_CHOICES = [
         ('planned', 'Planned'),
@@ -144,7 +146,7 @@ class News(models.Model):
     author = models.ForeignKey(Teacher, on_delete=models.CASCADE, related_name="news_articles")
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    image = models.ImageField(upload_to="news-images/", blank=True, null=True)
+    image = CloudinaryField("news-image", folder="news-banner", blank=True, null=True)
     is_published = models.BooleanField(default=True)
     priority = models.CharField(choices=PRIORITY_CHOICES, null=True, blank=True, max_length=20)
 
@@ -174,7 +176,7 @@ class Education(models.Model):
 
 class FacultyProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='faculty_profile')
-    profile_image = models.ImageField(upload_to='faculty_profiles/', blank=True, null=True)
+    profile_image = CloudinaryField("faculty-profile",folder="faculty-profile", blank=True, null=True)
     position = models.CharField(max_length=100)
     department = models.CharField(max_length=100)
     office_location = models.CharField(max_length=100)
@@ -228,7 +230,7 @@ class Publication(models.Model):
     journal_or_conference = models.CharField(max_length=200)
     year = models.PositiveIntegerField()
     doi = models.CharField(max_length=100, blank=True, null=True)
-    pdf_file = models.FileField(upload_to='publications/pdfs/', blank=True, null=True)
+    pdf_file = CloudinaryField("publications-pdf",folder="publication-pdf", blank=True, null=True)
     code_url = models.URLField(blank=True, null=True)
     is_selected = models.BooleanField(default=False, help_text="Mark as selected publication to display on profile")
     

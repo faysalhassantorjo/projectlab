@@ -49,7 +49,7 @@ class StudentProfileForm(forms.ModelForm):
             }),
             'cv': forms.FileInput(attrs={
                 'class': 'form-control',
-                'accept': 'application/pdf'
+                # 'accept': 'application/pdf'
             }),
             'skills': forms.TextInput(attrs={
                 'class': 'form-control',

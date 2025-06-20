@@ -213,9 +213,8 @@ def student_login(request):
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
-        print(username)
-        print(password)
-        # Authenticate user
+        next_url = request.POST.get('next', '')
+
         user = authenticate(request, username=username, password=password)
 
         if user is not None:
@@ -226,15 +225,15 @@ def student_login(request):
                 student = None 
             if student:
                 login(request, user)
-                return redirect('home')  # Redirect to dashboard or home page
+                return redirect(next_url if next_url else 'home')
             else:
                 messages.error(request, 'Unauthenticated Student!')
                 return render(request, 'base/login.html')
         else:
             print('Invalid username or password!')
             messages.error(request, 'Invalid username or password!')
-
-    return render(request, 'base/login.html')
+    next_url = request.GET.get('next', '')
+    return render(request, 'base/login.html',{ 'next': next_url })
 
 @csrf_exempt
 def teacher_login(request):
@@ -331,6 +330,9 @@ def dataset(request):
         'datasets':datasets
     }
     return render(request, 'base/dataset.html',context)
+from cloudinary.utils import cloudinary_url
+from django.shortcuts import get_object_or_404, redirect
+from django.utils import timezone
 
 def download_dataset(request, dataset_id):
     if request.method == 'POST':
@@ -344,12 +346,28 @@ def download_dataset(request, dataset_id):
             dataset=dataset,
             downloaded_at=timezone.now()
         )
-        dataset.downloaded_number +=1 
+        
+        dataset.downloaded_number += 1
         dataset.save()
-        # Redirect to the dataset file download
-        return redirect(dataset.file.url)
-    
+
+        # Safety check: Ensure dataset.file exists
+        if not dataset.file:
+            # Optionally add an error message
+            return redirect('project_detail', pk=dataset.project.id)
+
+       
+        download_url = dataset.file.url
+        if not download_url:
+            # Optionally add an error message
+            messages.error(request, 'Download link is not available.')
+            return redirect('project_detail', pk=dataset.project.id) 
+
+       
+        return redirect(download_url)  # Redirect to the file URL for download
+
+    # If not POST, fallback
     return redirect('project_detail', pk=dataset.project.id)
+
 from django.core.paginator import Paginator
 import pandas as pd
 def dataset_download_history(request, dataset_id):
@@ -371,7 +389,7 @@ def dataset_download_history(request, dataset_id):
     if dataset.file:
         try:
             # Read only the first 100 rows from the CSV file using pandas
-            df = pd.read_csv(dataset.file.path, nrows=100)
+            df = pd.read_csv(dataset.file.url, nrows=100)
             headers = df.columns.tolist()
             csv_data = df.values.tolist()
         except Exception as e:
@@ -417,11 +435,40 @@ def create_news(request):
         form = NewsForm()
     return render(request, 'base/create_news.html', {'form': form})
 
+from functools import wraps
+from urllib.parse import quote
+def approved_user_required(view_func):
+    @wraps(view_func)
+    def _wrapped_view(request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            # Use quote() to handle special characters in URLs safely
+            next_url = quote(request.get_full_path())
+            return redirect(f"/login/?next={next_url}")
+
+        user = request.user
+        try:
+            if hasattr(user, 'student_profile'):
+                if not user.student_profile.is_approved:
+                    messages.error(request, 'Your account is not approved yet.')
+                    return redirect('home')
+            elif hasattr(user, 'teacher'):
+                pass  # Teachers are allowed by default
+            else:
+                messages.error(request, 'Unauthorized user type.')
+                return redirect('home')
+        except Exception as e:
+            messages.error(request, 'Something went wrong. Please contact support.')
+            return redirect('home')
+
+        return view_func(request, *args, **kwargs)
+    return _wrapped_view
+
 # create_dataset
 from .form import DatasetForm
 from django_ckeditor_5.widgets import CKEditor5Widget
 
-@login_required(login_url="/login/")
+# @login_required(login_url="/login/")
+@approved_user_required
 def create_dataset(request):
     if request.method == 'POST':
         form = DatasetForm(request.POST, request.FILES)

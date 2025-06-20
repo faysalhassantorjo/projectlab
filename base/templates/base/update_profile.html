@@ -37,7 +37,7 @@
                             <!-- Profile Picture Preview -->
                             <div class="text-center mb-4">
                                 {% if form.instance.profile_picture %}
-                                <img id="profile-preview" src="{{ form.instance.profile_picture.url }}" class="shadow-2"
+                                <img id="profile-preview" src="{{ form.instance.profile_picture.imageURL }}" class="shadow-2"
                                     width="150" height="auto" style="object-fit: cover; border-radius: 15px; ">
                                 {% else %}
                                 <img id="profile-preview" src="{% static 'images/default-profile.png' %}"

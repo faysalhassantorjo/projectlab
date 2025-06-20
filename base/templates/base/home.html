@@ -45,7 +45,7 @@
               <div class="project-overlay">
                 <div class="status-indicator {% cycle 'status-planning' 'status-progress' 'status-completed' %}">
                   <div class="status-dot"></div>
-                  <span class="status-text">{% cycle 'Planning' 'In Progress' 'Completed' %}</span>
+                  <span class="status-text">{{project.status}}</span>
                 </div>
                 <div class="project-actions">
                   <div class="dropdown">
@@ -58,7 +58,7 @@
                       <li><a class="dropdown-item">
                           <i></i>Save</a></li>
                       <li>
-                        <hr class="dropdown-divider">
+                        <!-- <hr class="dropdown-divider"> -->
                       </li>
                       <!-- <li><a class="dropdown-item text-danger" href="#">
                           <i class="fas fa-trash me-2"></i>Delete Project</a></li> -->
@@ -92,10 +92,10 @@
                 <div class="metric-icon">
                   <i class="fas fa-tasks"></i>
                 </div>
-                <div class="metric-info">
+                <!-- <div class="metric-info">
                   <span class="metric-label">Progress</span>
                   <span class="metric-value">{% cycle '3' '5' '2' %}/5 Tasks</span>
-                </div>
+                </div> -->
               </div>
             </div>
 

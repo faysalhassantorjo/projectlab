@@ -84,9 +84,11 @@
                             {% if student.cv %}
                             <div class="list-group-item d-flex align-items-center">
                                 <i class="fas fa-file-pdf me-3 text-danger"></i>
-                                <a href="{{ student.cv.url }}" download class="text-decoration-none">Download CV</a>
+                                <a href="{{ student.cv.url }}?dl=1" download="safe.pdf">Download CV</a>
+                                
                             </div>
                             {% endif %}
+                            
                         </div>
                     </div>
                     {% if request.user.id == student.user.id %}
