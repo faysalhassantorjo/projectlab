@@ -56,6 +56,8 @@ cloudinary.config(
 )
 
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+STATICFILES_STORAGE = 'cloudinary_storage.storage.StaticHashedCloudinaryStorage'
+
 
 from .rich_text_editor import rich_editor_conf
 CKEDITOR_5_CONFIGS = rich_editor_conf
